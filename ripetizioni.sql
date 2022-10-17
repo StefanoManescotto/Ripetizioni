@@ -22,15 +22,17 @@ create table if not exists Docenti(
 
 create table if not exists Corso_docente(
 	titolo VARCHAR(30),
-	idDocente VARCHAR(30),
-	primary key(titolo, idDocente)
+	idDocente int,
+	primary key(titolo, idDocente),
+	foreign key (titolo) references Corsi (titolo),
+	foreign key (idDocente) references Docenti (idDocente)
 );
 
 create table if not exists Prenotazioni(
 	idPrenotazione int primary key AUTO_INCREMENT,
-	idUtente VARCHAR(30),
+	idUtente int,
 	idCorso VARCHAR(30),
-	idDocente VARCHAR(30),
+	idDocente int,
 	dataPren DATE,
 	oraPren TIME,
 	foreign key (idUtente) references Utenti(idUtente),

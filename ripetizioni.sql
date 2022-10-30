@@ -38,6 +38,8 @@ create table if not exists Prenotazioni(
 	foreign key (idUtente) references Utenti(idUtente),
 	foreign key (idCorso) references Corsi(titolo),
 	foreign key (idDocente) references Docenti(idDocente)
+	
+	--foreign key (idCorso, idDocente) references Corso_docente(idCorso, idDocente)
 );
 
 

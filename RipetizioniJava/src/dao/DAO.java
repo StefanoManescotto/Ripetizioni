@@ -1,6 +1,5 @@
 package dao;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -155,5 +154,67 @@ public class DAO {
             closeConnection(conn1);
         }
         return out;
+    }
+
+    public static void aggiungiPrenotazione(String corso, String nDocente, String cDocente, String data, int ora){
+        Connection conn1 = null;
+        int idDocente = 0;
+
+        if(ora < 15 || ora > 19){
+            return;
+        }
+
+        try {
+            conn1 = startConnection();
+
+            Statement st = conn1.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM DOCENTI");
+
+            while(rs.next()){
+                if(rs.getString("NOME").compareTo(nDocente) == 0
+                        && rs.getString("COGNOME").compareTo(cDocente) == 0){
+                    idDocente = rs.getInt("IDDOCENTE");
+                    break;
+                }
+            }
+
+            rs = st.executeQuery("SELECT * FROM PRENOTAZIONI");
+
+            while(rs.next()){
+                if(rs.getString("DATAPREN").compareTo(data) == 0
+                        && rs.getInt("ORAPREN") == ora){
+                    System.out.println("Data e orario occupati");
+                    return;
+                }
+            }
+
+
+            st.executeUpdate("INSERT INTO PRENOTAZIONI (IDUTENTE, IDCORSO, IDDOCENTE, DATAPREN, ORAPREN) VALUES (1, " +
+                    "\"" + corso + "\"," +
+                    "\"" + idDocente +
+                    "\",\"" + data + "\"" +
+                    ",\"" + ora + "\");");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            closeConnection(conn1);
+        }
+    }
+
+    public static void rimuoviPrenotazione(int idPrenotazione){
+        Connection conn1 = null;
+
+        try {
+            conn1 = startConnection();
+            Statement st = conn1.createStatement();
+
+            st.executeUpdate("DELETE FROM PRENOTAZIONI WHERE IDPRENOTAZIONE = " + idPrenotazione);
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            closeConnection(conn1);
+        }
     }
 }

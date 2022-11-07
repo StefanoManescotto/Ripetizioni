@@ -1,7 +1,6 @@
 import dao.*;
 import java.util.ArrayList;
 
-
 public class Main {
     public static void main(String[] args) {
         DAO.registerDriver();
@@ -14,6 +13,9 @@ public class Main {
         DAO.assocDocenteCorso("Mario", "Rossi", "Matematica");
 
         DAO.getRipetizioni();
+
+        DAO.aggiungiPrenotazione("Matematica", "Mario", "Rossi", "2022-03-10", 16);
+        DAO.rimuoviPrenotazione(1);
 
         ArrayList<Corso> corsi = DAO.getCorsi();
         for (Corso c: corsi)

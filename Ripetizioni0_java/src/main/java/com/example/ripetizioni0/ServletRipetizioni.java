@@ -10,13 +10,11 @@ import java.util.Calendar;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 
-@WebServlet(name = "helloServlet", value = "/hello-servlet")
-public class HelloServlet extends HttpServlet {
-    private String message;
-
+@WebServlet(name = "helloServlet", value = "/ripetizioni")
+public class ServletRipetizioni extends HttpServlet {
     public void init() {
         DAO.registerDriver();
-        DAO.aggiungiPrenotazione("matematica", "Mario", "Rossi", "2022-12-01", 18);
+        //DAO.aggiungiPrenotazione("matematica", "Mario", "Rossi", "2022-12-01", 18);
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -48,7 +46,6 @@ public class HelloServlet extends HttpServlet {
             }
         }
 
-        out.println("TESTING");
         ArrayList<Prenotazione> ps = DAO.getPrenotazioni();
         DAO.getRipetizioni();
         for(Prenotazione p : ps){

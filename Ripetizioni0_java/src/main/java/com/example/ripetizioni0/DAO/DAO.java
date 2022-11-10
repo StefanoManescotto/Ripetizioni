@@ -178,7 +178,7 @@ public class DAO {
         return out;
     }
 
-    public static void aggiungiPrenotazione(String corso, String nDocente, String cDocente, String data, int ora){
+    public static void aggiungiPrenotazione(String corso, String nomeDocente, String cognomeDocente, String data, int ora){
         Connection conn1 = null;
         int idDocente = 0;
 
@@ -193,8 +193,8 @@ public class DAO {
             ResultSet rs = st.executeQuery("SELECT * FROM DOCENTI");
 
             while(rs.next()){
-                if(rs.getString("NOME").compareTo(nDocente) == 0
-                        && rs.getString("COGNOME").compareTo(cDocente) == 0){
+                if(rs.getString("NOME").compareTo(nomeDocente) == 0
+                        && rs.getString("COGNOME").compareTo(cognomeDocente) == 0){
                     idDocente = rs.getInt("IDDOCENTE");
                     break;
                 }

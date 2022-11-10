@@ -31,4 +31,9 @@ public class Prenotazione {
     public int getOra() {
         return ora;
     }
+
+    @Override
+    public String toString() {
+        return corso + " " + idDocente + " " + data  + " " + ora;
+    }
 }

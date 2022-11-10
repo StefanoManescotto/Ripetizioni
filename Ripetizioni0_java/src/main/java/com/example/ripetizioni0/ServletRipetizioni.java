@@ -1,5 +1,6 @@
 package com.example.ripetizioni0;
 
+import com.example.ripetizioni0.DAO.DAO;
 import com.example.ripetizioni0.DAO.Prenotazione;
 
 import java.io.*;
@@ -14,16 +15,18 @@ public class HelloServlet extends HttpServlet {
     private String message;
 
     public void init() {
-        message = "Hello World!";
+        DAO.registerDriver();
+        DAO.aggiungiPrenotazione("matematica", "Mario", "Rossi", "2022-12-01", 18);
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
 
+
         prenotazioni.add(new Prenotazione("matematica", 1, 1, 17, "2022-11-03"));
         prenotazioni.add(new Prenotazione("matematica", 1, 1, 16, "2022-11-04"));
         prenotazioni.add(new Prenotazione("matematica", 1, 1, 16, "2022-12-04"));
-
+        prenotazioni.addAll(DAO.getPrenotazioni());
 
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
@@ -43,6 +46,13 @@ public class HelloServlet extends HttpServlet {
                 c.set(Calendar.HOUR_OF_DAY, 15);
                 c.add(Calendar.DAY_OF_WEEK, 1);
             }
+        }
+
+        out.println("TESTING");
+        ArrayList<Prenotazione> ps = DAO.getPrenotazioni();
+        DAO.getRipetizioni();
+        for(Prenotazione p : ps){
+            out.println("<h1>" + p + "</h1>");
         }
         out.println("</body></html>");
     }

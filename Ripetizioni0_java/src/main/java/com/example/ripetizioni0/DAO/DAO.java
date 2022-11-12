@@ -8,6 +8,7 @@ public class DAO {
     private static final String url1 = "jdbc:mysql://localhost:3306/ripetizioni";
     private static final String user = "root";
     private static final String password = "";
+    
 
     public static void registerDriver() {
         try {
@@ -20,12 +21,8 @@ public class DAO {
 
 
     private static Connection startConnection() throws SQLException{
-        Connection conn = null;
+        Connection conn;
         conn = DriverManager.getConnection(url1, user, password);
-        if (conn != null) {
-            //System.out.println("Connected to the database test");
-        }
-
         return conn;
     }
 
@@ -144,7 +141,7 @@ public class DAO {
             Statement st = conn1.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM UTENTI");
             while (rs.next()) {
-                Persona p = new Persona(rs.getString("NOME"),rs.getString("COGNOME"), rs.getString("EMAIL"));
+                Persona p = new Persona(rs.getString("NOME"),rs.getString("COGNOME"), rs.getString("EMAIL"), rs.getString("ruolo"));
                 out.add(p);
             }
         } catch (SQLException e) {
@@ -155,6 +152,30 @@ public class DAO {
         }
         return out;
     }
+
+    public static Persona getUtente(String email) {
+        Connection conn1 = null;
+        Persona out = null;
+        System.out.println("EMAIL: " + email);
+        try {
+            conn1 = startConnection();
+
+            Statement st = conn1.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM UTENTI WHERE EMAIL = \"" + email + "\"");
+            if(rs.next()) {
+                System.out.println("SONO QUI: " + email);
+                out = new Persona(rs.getString("NOME"),rs.getString("COGNOME"), rs.getString("EMAIL"),
+                        rs.getString("RUOLO"), rs.getString("PASSWORD"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            closeConnection(conn1);
+        }
+        return out;
+    }
+
 
     public static ArrayList<Prenotazione> getPrenotazioni(){
         Connection conn1 = null;

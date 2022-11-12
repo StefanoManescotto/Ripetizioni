@@ -12,19 +12,20 @@ import javax.servlet.annotation.*;
 
 @WebServlet(name = "helloServlet", value = "/ripetizioni")
 public class ServletRipetizioni extends HttpServlet {
+    DAO dao;
     public void init() {
-        DAO.registerDriver();
-        //DAO.aggiungiPrenotazione("matematica", "Mario", "Rossi", "2022-12-01", 18);
+        dao = (DAO)getServletContext().getAttribute("DAO");
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ArrayList<Prenotazione> prenotazioni = new ArrayList<>();
 
+        dao.aggiungiPrenotazione("matematica", "Mario", "Rossi", "2022-12-01", 16);
 
         prenotazioni.add(new Prenotazione("matematica", 1, 1, 17, "2022-11-03"));
         prenotazioni.add(new Prenotazione("matematica", 1, 1, 16, "2022-11-04"));
         prenotazioni.add(new Prenotazione("matematica", 1, 1, 16, "2022-12-04"));
-        prenotazioni.addAll(DAO.getPrenotazioni());
+        prenotazioni.addAll(dao.getPrenotazioni());
 
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
@@ -46,32 +47,23 @@ public class ServletRipetizioni extends HttpServlet {
             }
         }
 
-        ArrayList<Prenotazione> ps = DAO.getPrenotazioni();
-        DAO.getRipetizioni();
+        ArrayList<Prenotazione> ps = dao.getPrenotazioni();
+        System.out.println("PRENOTAZIONI: " + ps.size());
+        //dao.getRipetizioni();
         for(Prenotazione p : ps){
             out.println("<h1>" + p + "</h1>");
         }
         out.println("</body></html>");
     }
 
-    public void destroy() {
-    }
-
     private boolean isInPrenotazioni(Calendar c, ArrayList<Prenotazione> a){
         for(Prenotazione p : a){
-            if(c.get(Calendar.DAY_OF_MONTH) == getDay(p.getData()) &&
-                    c.get(Calendar.MONTH) == getMonth(p.getData()) && c.get(Calendar.HOUR_OF_DAY) == p.getOra()){
+            System.out.println(p.getYear() + " " + p.getDay() + " " + p.getMonth());
+            if(c.get(Calendar.YEAR) == p.getYear() && c.get(Calendar.DAY_OF_MONTH) == p.getDay() &&
+                    c.get(Calendar.MONTH) == p.getMonth() && c.get(Calendar.HOUR_OF_DAY) == p.getOra()){
                 return true;
             }
         }
         return false;
-    }
-
-    private int getDay(String time){
-        return Integer.valueOf(time.split("-")[2]);
-    }
-
-    private int getMonth(String time){
-        return Integer.valueOf(time.split("-")[1]) - 1;
     }
 }

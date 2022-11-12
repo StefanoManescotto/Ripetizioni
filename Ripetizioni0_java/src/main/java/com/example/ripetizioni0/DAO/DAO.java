@@ -5,12 +5,16 @@ import java.util.ArrayList;
 
 public class DAO {
 
-    private static final String url1 = "jdbc:mysql://localhost:3306/ripetizioni";
-    private static final String user = "root";
-    private static final String password = "";
-    
+    private final String url1;
+    private final String user;
+    private final String password;
 
-    public static void registerDriver() {
+
+    public DAO(String url1, String user, String password){
+        this.url1 = url1;
+        this.user = user;
+        this.password = password;
+
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             System.out.println("Driver correttamente registrato");
@@ -19,14 +23,13 @@ public class DAO {
         }
     }
 
-
-    private static Connection startConnection() throws SQLException{
+    private Connection startConnection() throws SQLException{
         Connection conn;
         conn = DriverManager.getConnection(url1, user, password);
         return conn;
     }
 
-    private static boolean closeConnection(Connection conn){
+    private boolean closeConnection(Connection conn){
         if (conn != null) {
             try {
                 conn.close();
@@ -39,7 +42,7 @@ public class DAO {
     }
 
 
-    public static void aggiungiCorso(String titolo, String descrizione){
+    public void aggiungiCorso(String titolo, String descrizione){
         Connection conn1 = null;
 
         try {
@@ -54,7 +57,7 @@ public class DAO {
         }
     }
 
-    public static void aggiungiDocente(String nome, String cognome){
+    public void aggiungiDocente(String nome, String cognome){
         Connection conn1 = null;
 
         try {
@@ -69,7 +72,7 @@ public class DAO {
         }
     }
 
-    public static void assocDocenteCorso(String nome, String cognome, String corso){
+    public void assocDocenteCorso(String nome, String cognome, String corso){
         Connection conn1 = null;
 
         try {
@@ -92,7 +95,7 @@ public class DAO {
         }
     }
 
-    public static void getRipetizioni(){
+    public void getRipetizioni(){
         Connection conn1 = null;
 
         try {
@@ -112,7 +115,7 @@ public class DAO {
         }
     }
 
-    public static ArrayList<Corso> getCorsi() {
+    public ArrayList<Corso> getCorsi() {
         Connection conn1 = null;
         ArrayList<Corso> out = new ArrayList<>();
         try {
@@ -132,7 +135,7 @@ public class DAO {
         return out;
     }
 
-    public static ArrayList<Persona> getUtenti() {
+    public ArrayList<Persona> getUtenti() {
         Connection conn1 = null;
         ArrayList<Persona> out = new ArrayList<>();
         try {
@@ -153,7 +156,7 @@ public class DAO {
         return out;
     }
 
-    public static Persona getUtente(String email) {
+    public Persona getUtente(String email) {
         Connection conn1 = null;
         Persona out = null;
         System.out.println("EMAIL: " + email);
@@ -177,7 +180,7 @@ public class DAO {
     }
 
 
-    public static ArrayList<Prenotazione> getPrenotazioni(){
+    public ArrayList<Prenotazione> getPrenotazioni(){
         Connection conn1 = null;
         ArrayList<Prenotazione> out = new ArrayList<>();
         try {
@@ -199,7 +202,7 @@ public class DAO {
         return out;
     }
 
-    public static void aggiungiPrenotazione(String corso, String nomeDocente, String cognomeDocente, String data, int ora){
+    public void aggiungiPrenotazione(String corso, String nomeDocente, String cognomeDocente, String data, int ora){
         Connection conn1 = null;
         int idDocente = 0;
 
@@ -231,7 +234,7 @@ public class DAO {
                 }
             }
 
-
+            //TODO: change value 1 for idUtente
             st.executeUpdate("INSERT INTO PRENOTAZIONI (IDUTENTE, IDCORSO, IDDOCENTE, DATAPREN, ORAPREN) VALUES (1, " +
                     "\"" + corso + "\"," +
                     "\"" + idDocente +
@@ -245,7 +248,7 @@ public class DAO {
         }
     }
 
-    public static void rimuoviPrenotazione(int idPrenotazione){
+    public void rimuoviPrenotazione(int idPrenotazione){
         Connection conn1 = null;
 
         try {

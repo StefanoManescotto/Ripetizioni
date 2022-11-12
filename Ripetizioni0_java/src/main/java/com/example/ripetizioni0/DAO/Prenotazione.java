@@ -32,6 +32,19 @@ public class Prenotazione {
         return ora;
     }
 
+    public int getYear(){
+        return Integer.valueOf(data.split("-")[0]);
+    }
+
+    public int getMonth(){
+        return Integer.valueOf(data.split("-")[1]) - 1;
+    }
+
+    public int getDay(){
+        return Integer.valueOf(data.split("-")[2]);
+    }
+
+
     @Override
     public String toString() {
         return corso + " " + idDocente + " " + data  + " " + ora;

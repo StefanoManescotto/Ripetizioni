@@ -13,14 +13,16 @@ import java.io.PrintWriter;
 
 @WebServlet(name = "ServletDocenti", value = "/aggiungiDocente")
 public class ServletDocenti extends HttpServlet {
+
+    DAO dao;
     public void init() {
-        DAO.registerDriver();
+        dao = (DAO)getServletContext().getAttribute("DAO");
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
 
-        Persona utente = DAO.getUtente(request.getParameter("emailUtente"));
+        Persona utente = dao.getUtente(request.getParameter("emailUtente"));
         if(utente == null){
             out.println("Utente non trovato");
         }else if(utente.getPassword().compareTo(request.getParameter("password")) == 0 && utente.getRuolo().compareTo("amministratore") == 0){

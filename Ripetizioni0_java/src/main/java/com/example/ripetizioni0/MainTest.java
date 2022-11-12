@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class MainTest {
     public static void main(String args[]){
-        ArrayList<Prenotazione> ps = DAO.getPrenotazioni();
-        for(Prenotazione p : ps){
-            System.out.println(p);
-        }
+//        ArrayList<Prenotazione> ps = DAO.getPrenotazioni();
+//        for(Prenotazione p : ps){
+//            System.out.println(p);
+//        }
     }
 }

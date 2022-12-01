@@ -4,11 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.ripetizioni_android.R;
-import com.example.ripetizioni_android.model.Prenotazione;
 
 import java.util.List;
 
@@ -36,8 +34,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.btnItem.setText(listPren.get(position).getTitle());
-        holder.description.setText(listPren.get(position).getBody());
+        holder.itemTitle.setText(listPren.get(position).getTitle());
+        holder.itemDescription.setText(listPren.get(position).getBody());
 
         holder.itemView.setOnClickListener(view -> itemClickListener.onClick(view, position, listPren.get(position)));
     }
@@ -72,13 +70,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView btnItem; //TODO: rename
-        TextView description;
+        TextView itemTitle;
+        TextView itemDescription;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            btnItem = (TextView) itemView.findViewById(R.id.textView1);
-            description = (TextView) itemView.findViewById(R.id.textView2);
+            itemTitle = itemView.findViewById(R.id.single_item_title);
+            itemDescription = itemView.findViewById(R.id.single_item_description);
         }
     }
 }

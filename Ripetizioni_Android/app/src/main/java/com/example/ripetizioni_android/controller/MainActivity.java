@@ -4,35 +4,56 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.view.MenuItem;
 
 import com.example.ripetizioni_android.R;
-import com.example.ripetizioni_android.controller.fragments.TestFragment;
+import com.example.ripetizioni_android.controller.fragments.AccountFragment;
+import com.example.ripetizioni_android.controller.fragments.HomeFragment;
+import com.example.ripetizioni_android.controller.fragments.PrenFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button fragmentBtn;
-    private TextView textView;
+    private BottomNavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.miaText);
-        textView.setText("TEST TEXT");
+        navigationView = findViewById(R.id.navigation_menu);
+        navigationView.setOnItemSelectedListener(item -> onNavMenuClick((MenuItem) item));
 
-        //fragmentBtn.setOnClickListener();
+        loadHomeFragment();
     }
 
-    public void onClickFragment(View v){
+    private boolean onNavMenuClick(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menu_home:
+                loadHomeFragment();
+                break;
+            case R.id.menu_pren:
+                loadPrenFragment();
+                break;
+            case R.id.menu_account:
+                loadAccountFragment();
+                break;
+        }
+        return true;
+    }
+
+    public void loadHomeFragment(){
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragmentLayout, TestFragment.class, null).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragmentLayout, HomeFragment.class, null).commit();
     }
 
-    public void onClickTest(View v){
-        textView.setText("test click");
+    public void loadPrenFragment(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.fragmentLayout, PrenFragment.class, null).commit();
+    }
+
+    public void loadAccountFragment(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.fragmentLayout, AccountFragment.class, null).commit();
     }
 }

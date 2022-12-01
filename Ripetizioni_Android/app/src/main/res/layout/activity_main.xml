@@ -4,8 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#434343"
+    android:background="#202020"
     tools:context=".controller.MainActivity">
+
+    <LinearLayout
+        android:id="@+id/fragmentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomMenu"
+        android:layout_marginBottom="4dp"
+        android:orientation="vertical"/>
 
     <LinearLayout
         android:id="@+id/bottomMenu"
@@ -14,49 +22,17 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickFragment"
-            android:text="Button"
-            android:textColor="#FFFFFF" />
-
-        <Button
-            android:id="@+id/button2"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickTest"
-            android:text="Button"
-            android:textColor="#ECEBEB" />
-
-        <Button
-            android:id="@+id/button3"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Button"
-            android:textColor="#EDE8E8" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fragmentLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottomMenu"
-        android:layout_marginBottom="4dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/miaText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!" />
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navigation_menu"
+            android:layout_width="match_parent"
+            android:layout_height="66dp"
+            android:background="#1B1B1B"
+            app:itemIconSize="30dp"
+            app:itemIconTint="@color/bottom_menu_selector"
+            app:itemTextColor="@color/bottom_menu_selector"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:menu="@menu/bottom_menu" />
     </LinearLayout>
 
 </RelativeLayout>

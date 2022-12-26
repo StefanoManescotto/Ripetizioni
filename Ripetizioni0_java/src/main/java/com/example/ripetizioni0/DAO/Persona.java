@@ -1,6 +1,7 @@
 package com.example.ripetizioni0.DAO;
 
 public class Persona {
+    private int id;
     private String nome;
     private String cognome;
     private String email;
@@ -8,14 +9,16 @@ public class Persona {
     private String ruolo;
 
 
-    public Persona(String nome, String cognome, String email, String ruolo) {
+    public Persona(int id, String nome, String cognome, String email, String ruolo) {
+        this.id = id;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.ruolo = ruolo;
     }
 
-    public Persona(String nome, String cognome, String email, String ruolo, String password) {
+    public Persona(int id, String nome, String cognome, String email, String ruolo, String password) {
+        this.id = id;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
@@ -50,6 +53,10 @@ public class Persona {
 
     public String getRuolo(){
         return ruolo;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

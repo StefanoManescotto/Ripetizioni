@@ -1,7 +1,10 @@
 package com.example.ripetizioni0.DAO;
 
+import java.util.ArrayList;
+
 public class Corso {
-    String titolo, descrizione;
+    private String titolo, descrizione;
+    private ArrayList<String> insegnanti = new ArrayList<>();
 
     public Corso(String titolo, String descrizione) {
         this.titolo = titolo;
@@ -22,6 +25,10 @@ public class Corso {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public void addInsegnante(String i){
+        insegnanti.add(i);
     }
 
     @Override

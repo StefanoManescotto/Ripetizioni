@@ -15,4 +15,9 @@
         <param-name>password</param-name>
         <param-value></param-value>
     </context-param>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
 </web-app>

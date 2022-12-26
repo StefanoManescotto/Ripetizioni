@@ -1,15 +1,30 @@
 package com.example.ripetizioni0.DAO;
 
 public class Prenotazione {
-    private String corso, data;
-    private int idDocente, idUtente, ora;
 
-    public Prenotazione(String corso, int idDocente, int idUtente, int ora, String data) {
+    private String corso, data, stato;
+    private String nomeDocente, cognomeDocente;
+    private int idPrenotazione, idDocente, idUtente, ora;
+
+    public Prenotazione(int idPrenotazione, String corso, int idDocente, int idUtente, int ora, String data, String stato) {
+        this.idPrenotazione = idPrenotazione;
         this.corso = corso;
         this.idDocente = idDocente;
         this.idUtente = idUtente;
         this.ora = ora;
         this.data = data;
+        this.stato = stato;
+    }
+
+    public Prenotazione(int idPrenotazione, String corso, String nomeDocente, String cognomeDocente, int idUtente, int ora, String data, String stato) {
+        this.idPrenotazione = idPrenotazione;
+        this.corso = corso;
+        this.nomeDocente = nomeDocente;
+        this.cognomeDocente = cognomeDocente;
+        this.idUtente = idUtente;
+        this.ora = ora;
+        this.data = data;
+        this.stato = stato;
     }
 
     public String getCorso() {
@@ -44,6 +59,25 @@ public class Prenotazione {
         return Integer.valueOf(data.split("-")[2]);
     }
 
+    public String getNomeDocente() {
+        return nomeDocente;
+    }
+
+    public String getStato() {
+        return stato;
+    }
+
+    //    public void setNomeDocente(String nomeDocente) {
+//        this.nomeDocente = nomeDocente;
+//    }
+
+    public String getCognomeDocente() {
+        return cognomeDocente;
+    }
+
+//    public void setCognomeDocente(String cognomeDocente) {
+//        this.cognomeDocente = cognomeDocente;
+//    }
 
     @Override
     public String toString() {

@@ -1,49 +1,42 @@
 package com.example.ripetizioni0;
 
+import com.example.ripetizioni0.DAO.Corso;
 import com.example.ripetizioni0.DAO.DAO;
-import com.example.ripetizioni0.DAO.Persona;
+import com.example.ripetizioni0.DAO.Docente;
+import com.google.gson.Gson;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
-@WebServlet(name = "ServletDocenti", value = "/aggiungiDocente")
+@WebServlet(name = "Docenti", value = "/docenti")
 public class ServletDocenti extends HttpServlet {
-
     DAO dao;
     public void init() {
         dao = (DAO)getServletContext().getAttribute("DAO");
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ArrayList<Corso> corsi;
+        ArrayList<Docente> docenti;
+
+        corsi = dao.getCorsi();
         PrintWriter out = response.getWriter();
 
-        Persona utente = dao.getUtente(request.getParameter("emailUtente"));
-        if(utente == null){
-            out.println("Utente non trovato");
-        }else if(utente.getPassword().compareTo(request.getParameter("password")) == 0 && utente.getRuolo().compareTo("amministratore") == 0){
-            //DAO.aggiungiDocente(request.getParameter("nomeDocente"), request.getParameter("cognomeDocente"));
+        docenti = dao.getAllDocenti();
 
-            HttpSession session = request.getSession();
-            if(request.getParameter("emailUtente") != null) {
-                session.setAttribute("userName", request.getParameter("emailUtente"));
+        for(Corso c : corsi){
+            for(Docente d : dao.getDocentiMateria(c.getTitolo())){
+                docenti.get(docenti.indexOf(d)).addMateria(c.getTitolo());
             }
-
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Docente Aggiunto</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println(utente + "<br>");
-            out.println("Docente Aggiunto <a href='./index.jsp'>Torna Indietro</a>");
-            out.println("</body>");
-            out.println("</html>");
-        }else{
-            out.println("password errata " + utente.getPassword() + " " + request.getParameter("password") + " " + utente);
         }
+
+        Gson gson = new Gson();
+        String json = gson.toJson(docenti);
+        out.println(json);
     }
 }

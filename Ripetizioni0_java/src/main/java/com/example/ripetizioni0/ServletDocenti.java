@@ -21,18 +21,28 @@ public class ServletDocenti extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ArrayList<Corso> corsi;
         ArrayList<Docente> docenti;
+        String materia, from, to;
 
-        corsi = dao.getCorsi();
+        materia = request.getParameter("materia");
+        from = request.getParameter("from");
+        to = request.getParameter("to");
+
         PrintWriter out = response.getWriter();
 
-        docenti = dao.getAllDocenti();
+        if(materia == null || from == null || to == null){
+            ArrayList<Corso> corsi;
+            corsi = dao.getCorsi();
 
-        for(Corso c : corsi){
-            for(Docente d : dao.getDocentiMateria(c.getTitolo())){
-                docenti.get(docenti.indexOf(d)).addMateria(c.getTitolo());
+            docenti = dao.getAllDocenti();
+
+            for(Corso c : corsi){
+                for(Docente d : dao.getDocentiMateria(c.getTitolo())){
+                    docenti.get(docenti.indexOf(d)).addMateria(c.getTitolo());
+                }
             }
+        }else{
+            docenti = dao.getOrariDocenti(materia, from, to);
         }
 
         Gson gson = new Gson();

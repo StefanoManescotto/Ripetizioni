@@ -22,26 +22,28 @@ public class ServletPrenota extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         if(!ServletAuthenticate.isAuthenticated(request.getCookies(), s)){
-            out.print("error");
+            out.print("401");
             return;
         }
 
-        //TODO: control if not null
         String corso = request.getParameter("corso");
         String nomeDocente = request.getParameter("nome");
         String cognomeDocente = request.getParameter("cognome");
         String data = request.getParameter("data");
         String[] ore = request.getParameter("ora").split("-");
-//        System.out.println("userId: " + Integer.parseInt(s.getAttribute("userId").toString()));
-//        System.out.println(corso);
-//        System.out.println(nomeDocente);
-//        System.out.println(cognomeDocente);
-//        System.out.println(data);
-//        System.out.println("TEST? " + ore.toString());
 
-        for(String o : ore){
-            dao.aggiungiPrenotazione(Integer.parseInt(s.getAttribute("userId").toString()), corso, nomeDocente, cognomeDocente, data, Integer.parseInt(o));
+        if(corso == null || nomeDocente == null || cognomeDocente == null || data == null || ore == null){
+            out.print("400");
+            return;
         }
-        out.print("200");
+
+        String serverResponse = "200";
+        for(String o : ore){
+            boolean ris = dao.aggiungiPrenotazione(Integer.parseInt(s.getAttribute("userId").toString()), corso, nomeDocente, cognomeDocente, data, Integer.parseInt(o));
+            if(!ris){
+                serverResponse = "400";
+            }
+        }
+        out.print(serverResponse);
     }
 }

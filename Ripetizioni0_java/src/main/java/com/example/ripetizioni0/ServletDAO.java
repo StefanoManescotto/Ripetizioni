@@ -14,6 +14,3 @@ public class ServletDAO extends HttpServlet {
         s.setAttribute("DAO", dao);
     }
 }
-
-
-//TODO: password encrypt

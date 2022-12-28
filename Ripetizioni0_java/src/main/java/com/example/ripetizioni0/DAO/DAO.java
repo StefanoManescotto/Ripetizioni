@@ -31,21 +31,21 @@ public class DAO {
         return conn;
     }
 
-    public void aggiungiCorso(String titolo, String descrizione){
-        Connection conn1 = null;
-
-        try {
-            conn1 = startConnection();
-
-            Statement st = conn1.createStatement();
-            st.executeUpdate("INSERT INTO CORSI (TITOLO, DESCRIZIONE) VALUES ( \"" + titolo + "\",\""+ descrizione +"\");");
-            st.close();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            closeConnection(conn1);
-        }
-    }
+//    public void aggiungiCorso(String titolo, String descrizione){
+//        Connection conn1 = null;
+//
+//        try {
+//            conn1 = startConnection();
+//
+//            Statement st = conn1.createStatement();
+//            st.executeUpdate("INSERT INTO CORSI (TITOLO, DESCRIZIONE) VALUES ( \"" + titolo + "\",\""+ descrizione +"\");");
+//            st.close();
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        } finally {
+//            closeConnection(conn1);
+//        }
+//    }
 
     public boolean aggiungiDocente(String nome, String cognome){
         Connection conn1 = null;
@@ -57,9 +57,36 @@ public class DAO {
             rs = st.executeQuery("SELECT * FROM DOCENTI WHERE NOME = \"" + nome + "\" AND COGNOME = \"" + cognome + "\"");
             if(!rs.next()) {
                 st.executeUpdate("INSERT INTO DOCENTI (NOME, COGNOME) VALUES ( \"" + nome + "\",\"" + cognome + "\");");
+            }else if(!rs.getBoolean("ATTIVA")){
+                st.executeUpdate("UPDATE DOCENTI SET ATTIVA = 1 WHERE NOME = \"" + nome + "\" AND COGNOME = \"" + cognome + "\"");
             }else{
                 return false;
             }
+            st.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            closeConnection(conn1);
+        }
+        return true;
+    }
+
+    public boolean aggiungiUtente(String nome, String cognome, String email, String psw, String ruolo){
+        Connection conn1 = null;
+
+        try {
+            conn1 = startConnection();
+
+            Statement st = conn1.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM UTENTI WHERE EMAIL = \"" + email + "\"");
+            if(rs.next()){
+                return false;
+            }
+
+            st.executeUpdate("INSERT INTO UTENTI (NOME, COGNOME, EMAIL, PASSWORD, RUOLO) VALUES (\"" + nome +"\",\"" + cognome + "\", \""
+                    + email +"\", \"" + psw + "\", \"" + ruolo + "\");");
+
+            rs.close();
             st.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -76,7 +103,7 @@ public class DAO {
             conn1 = startConnection();
 
             Statement st = conn1.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM DOCENTI");
+            ResultSet rs = st.executeQuery("SELECT * FROM DOCENTI WHERE ATTIVA = 1");
             while(rs.next()){
                 if(rs.getString("NOME").compareTo(nome) == 0
                         && rs.getString("COGNOME").compareTo(cognome) == 0){
@@ -95,28 +122,28 @@ public class DAO {
         }
     }
 
-    public void getRipetizioni(){
-        Connection conn1 = null;
-
-        try {
-            conn1 = startConnection();
-
-            Statement st = conn1.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM CORSO_DOCENTE, DOCENTI " +
-                    "WHERE CORSO_DOCENTE.IDDOCENTE = DOCENTI.IDDOCENTE ORDER BY TITOLO");
-            while(rs.next()){
-                System.out.println(rs.getString("TITOLO") + ": " + rs.getString("NOME") +
-                        " " + rs.getString("COGNOME"));
-            }
-
-            rs.close();
-            st.close();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            closeConnection(conn1);
-        }
-    }
+//    public void getRipetizioni(){
+//        Connection conn1 = null;
+//
+//        try {
+//            conn1 = startConnection();
+//
+//            Statement st = conn1.createStatement();
+//            ResultSet rs = st.executeQuery("SELECT * FROM CORSO_DOCENTE, DOCENTI " +
+//                    "WHERE CORSO_DOCENTE.IDDOCENTE = DOCENTI.IDDOCENTE ORDER BY TITOLO");
+//            while(rs.next()){
+//                System.out.println(rs.getString("TITOLO") + ": " + rs.getString("NOME") +
+//                        " " + rs.getString("COGNOME"));
+//            }
+//
+//            rs.close();
+//            st.close();
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        } finally {
+//            closeConnection(conn1);
+//        }
+//    }
 
     public ArrayList<Corso> getCorsi() {
         Connection conn1 = null;
@@ -125,7 +152,7 @@ public class DAO {
             conn1 = startConnection();
 
             Statement st = conn1.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM CORSI");
+            ResultSet rs = st.executeQuery("SELECT * FROM CORSI WHERE ATTIVA = TRUE");
             while (rs.next()) {
                 Corso p = new Corso(rs.getString("TITOLO"), rs.getString("DESCRIZIONE"));
                 out.add(p);
@@ -215,12 +242,12 @@ public class DAO {
         return out;
     }
 
-    public void aggiungiPrenotazione(int idUtente, String corso, String nomeDocente, String cognomeDocente, String data, int ora){
+    public boolean aggiungiPrenotazione(int idUtente, String corso, String nomeDocente, String cognomeDocente, String data, int ora){
         Connection conn1 = null;
         int idDocente = 0;
 
         if(ora < 15 || ora > 19){
-            return;
+            return false;
         }
 
         try {
@@ -237,16 +264,25 @@ public class DAO {
                 }
             }
 
+            if(idDocente == 0){
+                return false;
+            }
             rs = st.executeQuery("SELECT * FROM PRENOTAZIONI WHERE IDDOCENTE = \"" + idDocente+ "\"");
 
             while(rs.next()){
                 if(rs.getString("DATAPREN").compareTo(data) == 0
                         && rs.getInt("ORAPREN") == ora && !rs.getString("STATO").equals("cancellata")){
                     System.out.println("Data e orario occupati");
-                    return;
+                    return false;
                 }
             }
             rs.close();
+
+            rs = st.executeQuery("SELECT * FROM CORSI WHERE TITOLO = \"" + corso + "\"");
+            if(rs.next() && !rs.getBoolean("ATTIVA")){
+                return false;
+            }
+
 
             st.executeUpdate("INSERT INTO PRENOTAZIONI (IDUTENTE, IDCORSO, IDDOCENTE, DATAPREN, ORAPREN) VALUES (\"" + idUtente + "\"," +
                     "\"" + corso + "\"," +
@@ -257,9 +293,11 @@ public class DAO {
             st.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            return false;
         } finally {
             closeConnection(conn1);
         }
+        return true;
     }
 
     public ArrayList<Prenotazione> getPrenotazioniUtente(int idUtente){
@@ -284,22 +322,22 @@ public class DAO {
         return prenotazioni;
     }
 
-    public void rimuoviPrenotazione(int idPrenotazione){
-        Connection conn1 = null;
-
-        try {
-            conn1 = startConnection();
-            Statement st = conn1.createStatement();
-
-            st.executeUpdate("DELETE FROM PRENOTAZIONI WHERE IDPRENOTAZIONE = " + idPrenotazione);
-            st.close();
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            closeConnection(conn1);
-        }
-    }
+//    public void rimuoviPrenotazione(int idPrenotazione){
+//        Connection conn1 = null;
+//
+//        try {
+//            conn1 = startConnection();
+//            Statement st = conn1.createStatement();
+//
+//            st.executeUpdate("DELETE FROM PRENOTAZIONI WHERE IDPRENOTAZIONE = " + idPrenotazione);
+//            st.close();
+//
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        } finally {
+//            closeConnection(conn1);
+//        }
+//    }
 
     public ArrayList<Docente> getDocentiMateria(String materia){
         Connection conn1 = null;
@@ -310,7 +348,7 @@ public class DAO {
             Statement st = conn1.createStatement();
 
             String query = "SELECT DOCENTI.IDDOCENTE, DOCENTI.NOME, DOCENTI.COGNOME FROM DOCENTI, CORSO_DOCENTE WHERE CORSO_DOCENTE.IDCORSO =  \"" + materia + "\" " +
-                    "AND CORSO_DOCENTE.IDDOCENTE = DOCENTI.IDDOCENTE";
+                    "AND CORSO_DOCENTE.IDDOCENTE = DOCENTI.IDDOCENTE AND ATTIVA = 1";
             ResultSet rs = st.executeQuery(query);
             while(rs.next()){
                 docenti.add(new Docente(rs.getInt("IDDOCENTE"), rs.getString("NOME"), rs.getString("COGNOME")));
@@ -363,6 +401,8 @@ public class DAO {
 
             if(!rs.next()){
                 st.executeUpdate("INSERT INTO CORSI (TITOLO, DESCRIZIONE) VALUES ( \"" + materia + "\",\""+ descrizione +"\");");
+            }else if(!rs.getBoolean("ATTIVA")){
+                st.executeUpdate("UPDATE CORSI SET ATTIVA = 1, DESCRIZIONE = \"" + descrizione + "\" WHERE TITOLO = \"" + materia + "\"");
             }else{
                 return false;
             }
@@ -377,13 +417,15 @@ public class DAO {
         return true;
     }
 
-    public void removeMateria(String materia){
+    public void rimuoviMateria(String materia){
         Connection conn1 = null;
 
         try {
             conn1 = startConnection();
             Statement st = conn1.createStatement();
-            st.executeUpdate("DELETE FROM CORSI WHERE TITOLO = \"" + materia + "\"");
+            st.executeUpdate("UPDATE CORSI SET ATTIVA = 0 WHERE TITOLO = \"" + materia + "\"");
+            st.executeUpdate("DELETE FROM CORSO_DOCENTE WHERE IDCORSO = \"" + materia + "\"");
+            cancellaAllPrenByMateria();
             st.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -392,13 +434,15 @@ public class DAO {
         }
     }
 
-    public void removeDocente(int idDocente){
+    public void rimuoviDocente(int idDocente){
         Connection conn1 = null;
 
         try {
             conn1 = startConnection();
             Statement st = conn1.createStatement();
-            st.executeUpdate("DELETE FROM DOCENTI WHERE IDDOCENTE = \"" + idDocente + "\"");
+            st.executeUpdate("UPDATE DOCENTI SET ATTIVA = 0 WHERE IDDOCENTE = \"" + idDocente + "\"");
+            st.executeUpdate("DELETE FROM CORSO_DOCENTE WHERE IDDOCENTE = \"" + idDocente + "\"");
+            cancellaAllPrenByDocente();
             st.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -442,7 +486,7 @@ public class DAO {
             Statement st = conn1.createStatement();
 
             ResultSet rs;
-            rs = st.executeQuery("SELECT * FROM DOCENTI");
+            rs = st.executeQuery("SELECT * FROM DOCENTI WHERE ATTIVA = 1");
             while(rs.next()){
                 docenti.add(new Docente(rs.getInt("IDDOCENTE"), rs.getString("NOME"), rs.getString("COGNOME")));
             }
@@ -455,6 +499,36 @@ public class DAO {
         }
 
         return docenti;
+    }
+
+    public void cancellaAllPrenByMateria(){
+        Connection conn1 = null;
+        try {
+            conn1 = startConnection();
+            Statement st = conn1.createStatement();
+            st.executeUpdate("UPDATE PRENOTAZIONI SET STATO = \"" + "cancellata" + "\" WHERE IDCORSO in (" +
+                    "SELECT TITOLO FROM CORSI WHERE ATTIVA = 0)");
+            st.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            closeConnection(conn1);
+        }
+    }
+
+    public void cancellaAllPrenByDocente(){
+        Connection conn1 = null;
+        try {
+            conn1 = startConnection();
+            Statement st = conn1.createStatement();
+            st.executeUpdate("UPDATE PRENOTAZIONI SET STATO = \"" + "cancellata" + "\" WHERE IDDOCENTE in (" +
+                    "SELECT IDDOCENTE FROM DOCENTI WHERE ATTIVA = 0)");
+            st.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            closeConnection(conn1);
+        }
     }
 
     public boolean cambiaPrenStato(int idPrenotazione, String newState, int idUtente, String ruolo){
@@ -472,12 +546,10 @@ public class DAO {
                 }
             }
 
-
             st.executeUpdate("UPDATE PRENOTAZIONI SET STATO = \"" + newState + "\" WHERE IDPRENOTAZIONE = \"" + idPrenotazione + "\"");
-
             st.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return false;
         } finally {
             closeConnection(conn1);
         }

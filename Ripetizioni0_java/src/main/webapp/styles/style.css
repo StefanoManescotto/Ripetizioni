@@ -89,21 +89,21 @@ select {
     font-size: 18px;
     border: 1px solid #ccc;
     height: 34px;
-    -webkit-appearance: none;
+    /*-webkit-appearance: none; DELETED HERE*/
 }
 
 /* CAUTION: IE hackery ahead */
-select::-ms-expand { 
-    display: none; /* remove default arrow on ie10 and ie11 */
-}
+/*select::-ms-expand { DELETED HERE*/
+/*    display: none; !* remove default arrow on ie10 and ie11 *!*/
+/*}*/
 
-/* target Internet Explorer 9 to undo the custom arrow */
-@media screen and (min-width:0\0) {
-    select {
-        background:none\9;
-        padding: 5px\9;
-    } 
-}
+/*!* target Internet Explorer 9 to undo the custom arrow *!*/
+/*@media screen and (min-width:0) { DELETED HERE*/
+/*    select {*/
+/*        background:none\9;*/
+/*        padding: 5px\9;*/
+/*    } */
+/*}*/
 
 #checkboxes ul {
     margin-right: 40px;
@@ -128,6 +128,18 @@ select::-ms-expand {
     background-color: #fff;
     font-size: 20px;
     text-align: center;
+}
+
+.state-text {
+    color: #a80000;
+    margin-top: 5px;
+    margin-bottom: -16px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.btn-input {
+    width: 150px;
 }
 
 .btn-prenota {
@@ -177,6 +189,18 @@ select::-ms-expand {
   border-radius:0;
   box-shadow:none;
   border:none;
+}
+
+.header-fixed {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+#app {
+    margin-top: 100px;
+    z-index:1;
 }
 
 @media (min-width:768px) {

@@ -1,95 +1,161 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ripetizioni</title>
+        <title>logIn</title>
         <link rel="icon" href="icon.png">
+
+        <meta charset="UTF-8">
+<!--        <meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+<!--        <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+
+        <script src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+        <link rel="stylesheet" href="https://unicons.iconscout.com/release/v3.0.1/css/line.css">
+        <link rel="stylesheet" href="styles/logIn_style.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="styles/style.css">
     </head>
 
-    <header>
-        <div>
+    <body>
+        <header>
             <div class="header-dark">
                 <nav class="navbar navbar-dark navbar-expand-md navigation-clean-search">
                     <div class="container"><a class="navbar-brand" href="index.html">Ripetizioni</a>
-                        <div class="collapse navbar-collapse"
-                            id="navcol-1">
+                        <div class="collapse navbar-collapse" id="navcol-1">
                             <ul class="nav navbar-nav form-inline mr-auto">
                                 <li class="nav-item" role="presentation"><a class="nav-link" href="index.html">Prenota</a></li>
                             </ul>
-<!--                            <span class="navbar-text"><a href="#" class="login">Log In</a></span>-->
-<!--                            <button class="btn-prenota btn">Sign Up</button>-->
+                            <span class="navbar-text"><button onclick="openLogInWindow()" class="login nav-btn nav-link">Log In</button></span>
+                            <button class="btn-prenota btn" onclick="openSignUpWindow()">Sign Up</button>
                         </div>
                     </div>
                 </nav>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <body class="test-body">
-        <div>
-            <div class="container">
-                <label><b>Username</b></label>
-                <input id="email" type="text" placeholder="Enter Username" name="uname" required>
+        <div id="logInBody">
+            <div class="container-logIn">
+                <div class="forms-logIn">
+                    <div class="form-logIn login">
+                        <span class="title">Log In</span>
+                        <div class="input-field">
+                            <input type="text" placeholder="Email *" required id="loginEmail">
+                            <i class="uil uil-envelope icon"></i>
+                        </div>
+                        <div class="input-field">
+                            <input type="password" class="password" placeholder="Password *" required id="loginPassword">
+                            <i class="uil uil-lock icon"></i>
+                            <i class="uil uil-eye-slash showHidePw"></i>
+                        </div>
+                        <div class="input-field button-logIn">
+                            <button class="btnLogIn" value="Login" onclick="onLogInClick()">LogIn</button>
+                        </div>
+                        <p id="lbl-status" class="state-text"></p>
+                        <div class="login-signup">
+                            <span class="text">Non sei registrato?
+                                <a href="#" class="text signup-link" onclick="openSignUpWindow()">Registrati Ora</a>
+                            </span>
+                        </div>
+                    </div>
 
-                <label><b>Password</b></label>
-                <input id="password" type="password" placeholder="Enter Password" name="psw" required>
+                    <!-- Registration -->
+                    <div class="form-logIn signup">
+                        <span class="title">Registrazione</span>
 
-                <button onclick="onLogInClick()">Login</button>
-                <label>
-                    <input type="checkbox" checked="checked" name="remember"> Remember me
-                </label>
+                        <div class="input-wrapper">
+                            <div class="input-left input-field">
+                                <input id="signUpCognome" type="text" placeholder="Nome *" required>
+                                <i class="uil uil-user"></i>
+                            </div>
+                            <div class="input-field">
+                                <input id="signUpNome" type="text" placeholder="Cognome *" required>
+                                <i class="uil uil-user"></i>
+                            </div>
+                        </div>
+                        <div class="input-field">
+                            <input id="signUpEmail" type="text" placeholder="Email *" required>
+                            <i class="uil uil-envelope icon"></i>
+                        </div>
+                        <div class="input-field">
+                            <input id="signUpPassword" type="password" class="password" placeholder="Password *" required>
+                            <i class="uil uil-lock icon"></i>
+                        </div>
+                        <div class="input-field">
+                            <input id="confirmPassword" type="password" class="password" placeholder="Conferma password *" required>
+                            <i class="uil uil-lock icon"></i>
+                            <i class="uil uil-eye-slash showHidePw"></i>
+                        </div>
+                        <div class="input-field button-logIn">
+                            <button class="btnLogIn" value="signup" onclick="onSignUpClick()">SignUp</button>
+                        </div>
+                        <p id="lbl-status2" class="state-text"></p>
+                        <div class="login-signup">
+                            <span class="text">Gi&aacute; registrato?
+                                <a href="#" class="text login-link" onclick="openLogInWindow()">Effettua il LogIn</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="container" style="background-color:#f1f1f1">
-                <button type="button" class="cancelbtn">Cancel</button>
-                <span class="psw">Forgot <a href="#">password?</a></span>
-            </div>
         </div>
-
-
+        <script src="js/logIn.js"></script>
         <script>
             function onLogInClick(){
-                let emailInput = document.getElementById("email");
-                let passwordInput = document.getElementById("password");
-
-                $.post('logIn', { email: emailInput.value, password: passwordInput.value }, function(data){
-                    //console.log(data + " " + (data == 'authenticated') + " " + (data.toString( == "authenticated") + " " + data.response);
-                    if(data === 'authenticated'){
-                        console.log(document.cookie + " " + data);
-                        location.href = "index.html";
-                    }else{
-                        console.log("Authentication failed");
-                    }
-                });
+                let emailInput = document.getElementById("loginEmail");
+                let passwordInput = document.getElementById("loginPassword");
+                logIn(emailInput.value, passwordInput.value);
             }
 
-            // new Vue ({
-            //     el: '#app',
-            //     data: {
-            //         account:  'guest',
-            //         link :    '/SwebVueSessioniUtente/ServletSessions'
-            //     },
-            //     methods:{
-            //         getInfo:function(){
-            //             var self = this;
-            //             if (self.sessione==='sessione inesistente')
-            //                 $.post(this.link, {utente: this.account}, function (data) {
-            //                     self.sessione = data;
-            //                 });
-            //             else
-            //                 $.post(this.link, {utente: this.account, sessione: this.sessione},
-            //                     function (data) {
-            //                         self.altreInfo = data;
-            //                     });
-            //         }
-            //     }
-            // });
+            function logIn(m, psw){
+                if(m !== "" && psw !== "") {
+                    $.post('logIn', {email: m, password: psw}, function (data) {
+                        if (data === 'authenticated') {
+                            console.log(document.cookie + " " + data);
+                            location.href = "index.html";
+                        } else {
+                            console.log("Authentication failed");
+                        }
+                    });
+                }else{
+                    let lbl = document.getElementById("lbl-status");
+                    lbl.innerHTML = "Riempi tutti i campi per proseguire"
+                }
+            }
+
+            function onSignUpClick(){
+                let nomeInput = document.getElementById("signUpNome");
+                let cognomeInput = document.getElementById("signUpCognome");
+                let emailInput = document.getElementById("signUpEmail");
+                let passwordInput = document.getElementById("signUpPassword");
+                let confirmPassInput = document.getElementById("confirmPassword");
+
+                if(nomeInput.value !== "" && cognomeInput.value !== "" && emailInput.value !== "" && passwordInput.value !== "" && confirmPassInput.valueOf() !== ""){
+                    if(confirmPassInput.value === passwordInput.value) {
+                        $.post('signUp', {
+                            nome: nomeInput.value,
+                            cognome: cognomeInput.value,
+                            email: emailInput.value,
+                            password: passwordInput.value
+                        }, function (data) {
+                            console.log("HERE " + data);
+                            if (data === "200") {
+                                console.log("HERE2 " + data);
+                                logIn(emailInput.value, passwordInput.value);
+                            }
+                        });
+                    }else{
+                        let lbl = document.getElementById("lbl-status2");
+                        lbl.innerHTML = "I campi 'password' e 'conferma password' devono essere uguali"
+                    }
+
+                }else{
+                    let lbl = document.getElementById("lbl-status2");
+                    lbl.innerHTML = "Riempi tutti i campi per proseguire"
+                }
+            }
         </script>
     </body>
 </html>
+

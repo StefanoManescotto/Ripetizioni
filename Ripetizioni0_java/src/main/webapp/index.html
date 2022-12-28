@@ -8,45 +8,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/style.css">
+
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="test.js"></script>
-    <!--        <script type="importmap">-->
-    <!--          { "imports": {-->
-    <!--              "vue":               "https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.41/vue.esm-browser.prod.js",-->
-    <!--              "vue-router":        "https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.1.5/vue-router.esm-browser.min.js",-->
-    <!--              "@vue/devtools-api": "https://unpkg.com/@vue/devtools-api@6.4.5/lib/esm/index.js"-->
-    <!--          } }-->
-    <!--        </script>-->
-
+    <script type="text/javascript" src="js/confermaView.js"></script>
+    <script type="text/javascript" src="js/docentiView.js"></script>
+    <script type="text/javascript" src="js/prenotazioniView.js"></script>
+    <script type="text/javascript" src="js/materieView.js"></script>
+    <script type="text/javascript" src="js/docenteMateriaView.js"></script>
 </head>
 
-<header>
-    <div id="header-wrap">
-        <div class="header-dark">
-            <nav class="navbar navbar-dark navbar-expand-md navigation-clean-search">
-                <div class="container"><button class="nav-btn navbar-brand" onclick="changeViewPrenota()">Ripetizioni</button>
-                    <div class="collapse navbar-collapse"
-                         id="navcol-1">
-                        <ul class="nav navbar-nav form-inline mr-auto">
-                            <li class="nav-item" role="presentation"><button class="nav-btn nav-link" onclick="changeViewPrenota()">Prenota</button></li>
-                            <li class="nav-item" role="presentation" v-if="userType === 'cliente' || userType === 'amministratore'"><button class="nav-link nav-btn" onclick="changeViewPrenotazioni()" role="button">Prenotazioni</button></li>
-                            <li class="nav-item" role="presentation" v-if="userType === 'amministratore'"><button class="nav-link nav-btn" onclick="aggiungiDocenteView()" >Docenti</button></li>
-                            <!--                                <li class="nav-item" role="presentation" v-if="userType === 'amministratore'"><button class="nav-link nav-btn" onclick="testFun">Materie</button></li>-->
-                        </ul>
-                        <div v-if="userType === 'ospite'">
-                            <span class="navbar-text"><button onclick="logIn()" class="login nav-btn nav-link">Log In</button></span>
-                            <button class="btn-prenota btn">Sign Up</button>
-                        </div>
-                        <div v-if="userType === 'cliente' || userType === 'amministratore'">
-                            <span class="navbar-text">{{ userEmail }}</span>
-                            <button class="logout-btn btn" onclick="logOut()">LogOut</button>
-                        </div>
+<header class="header-fixed">
+    <div id="header-wrap" class="header-dark">
+        <nav class="header-dark navbar navbar-dark navbar-expand-md navigation-clean-search">
+            <div class="container">
+                <button class="nav-btn navbar-brand" onclick="changeViewPrenota()">Ripetizioni</button>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="nav navbar-nav form-inline mr-auto">
+                        <li class="nav-item" role="presentation"><button class="nav-btn nav-link" onclick="changeViewPrenota()">Prenota</button></li>
+                        <li class="nav-item" role="presentation" v-if="userType === 'cliente' || userType === 'amministratore'"><button class="nav-link nav-btn" onclick="changeViewPrenotazioni()">Prenotazioni</button></li>
+                        <li class="nav-item" role="presentation" v-if="userType === 'amministratore'"><button class="nav-link nav-btn" onclick="docentiView()" >Docenti</button></li>
+                    </ul>
+                    <div v-if="userType === 'ospite'">
+                        <span class="navbar-text"><button onclick="logIn()" class="login nav-btn nav-link">Log In</button></span>
+                        <button class="btn-prenota btn" onclick="onSignUpClick()">Sign Up</button>
+                    </div>
+                    <div v-if="userType === 'cliente' || userType === 'amministratore'">
+                        <span class="navbar-text">{{ userEmail }}</span>
+                        <button class="logout-btn btn" onclick="logOut()">LogOut</button>
                     </div>
                 </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
     </div>
 </header>
 
@@ -72,17 +66,11 @@
                     <div class="col-margin col col-2">Data</div>
                     <div class="col-margin col col-2"></div>
                 </li>
-                <!--                    <li class="table-row">-->
-                <!--                        <div class="col-margin col col-2">Matematica</div>-->
-                <!--                        <div class="col-margin col col-2">Mario Rossi</div>-->
-                <!--                        <div class="col-margin col col-2">2022/12/21<br>15-16</div>-->
-                <!--                        <div class="col-margin col col-2"><button class="btn prenotazioni-btn-cancella">cancella</button><button class="btn prenotazioni-btn-effettuata">effettuata</button></div>-->
-                <!--                    </li>-->
             </ul>
         </div>
 
         <div v-if="currentView === 'docente'" id="docenti">
-            <div class="col btn-aggiungi" v-if="vueHeader.userType === 'amministratore'"><button class="btn btn-prenota" onclick="aggiungiDocente()">Aggiungi Docente</button></div>
+            <div class="col btn-aggiungi" v-if="vueHeader.userType === 'amministratore'"><button class="btn btn-prenota" onclick="aggiungiDocenteView()">Aggiungi Docente</button></div>
             <ul class="responsive-table" id="lista-docenti">
                 <li class="table-header">
                     <div class="col">docente</div>
@@ -92,50 +80,43 @@
             </ul>
         </div>
 
-        <div class="content" v-if="currentView === 'confermaPren'">
-            <div class="container row align-items-stretch justify-content-center no-gutters ">
-                <div class="col-md-7">
-                    <div class="form-prenota">
-                        <h3 class="text-center">Conferma Prenotazione</h3>
-                        <form class="mb-5" method="get" id="contactForm" name="contactForm" novalidate="novalidate">
-                            <div class="ol-md-12 form-group mb-3">
-                                <div class="ol-md-12 form-group mb-3">
-                                    <label class="col-form-label">Materia:</label><br>
-                                    <label class="">{{ materia }}</label>
-                                </div>
-                            </div>
-                            <div class="ol-md-12 form-group mb-3">
-                                <div class="ol-md-12 form-group mb-3">
-                                    <label class="col-form-label" >Insegnante:</label><br>
-                                    <select id="selectInsegnante" onclick="onConfermaViewClick()">
-                                        <option value="empty"></option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="ol-md-12 form-group mb-3">
-                                <div class="ol-md-12 form-group mb-3">
-                                    <label class="col-form-label" >Giorno:</label><br>
-                                    <select id="selectGiorno" onclick="onConfermaViewClick()">
-                                        <option value="empty"></option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row center-row">
-                                <div class="col-md-12 form-group mb-3" id="checkboxes" >
-                                    <label class="col-form-label">Orario:</label>
-                                    <ul id="checkOra">
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col-md-5 form-group text-center">
-                                    <input type=submit value="Prenota" class="btn btn-block btn-primary rounded-0 py-2 px-4" onclick="prenota()">
-                                    <span class="submitting"></span>
-                                </div>
-                            </div>
-                        </form>
+        <div class="content container row align-items-stretch justify-content-center no-gutters" v-if="currentView === 'confermaPren'">
+<!--            <div class="container row align-items-stretch justify-content-center no-gutters">-->
+            <div class="col-md-7 form-prenota">
+                <h3 class="text-center">Conferma Prenotazione</h3>
+                <form class="mb-5" method="get" id="contactForm conferma-form" name="contactForm" novalidate="novalidate" onsubmit="return validateFormConferma()">
+                    <div class="ol-md-12 form-group mb-3">
+                        <label class="col-form-label">Materia:</label><br>
+                        <label id="confermaViewMateria">{{ materia }}</label>
                     </div>
-                </div>
+                    <div class="ol-md-12 form-group mb-3">
+                        <label for="selectInsegnante" class="col-form-label" >Insegnante:</label><br>
+                        <select id="selectInsegnante" onclick="onConfermaViewClick()">
+                            <option value="empty"></option>
+                        </select>
+                    </div>
+                    <div class="ol-md-12 form-group mb-3">
+                        <label for="selectGiorno" class="col-form-label" >Giorno:</label><br>
+                        <select id="selectGiorno" onclick="onConfermaViewClick()">
+                            <option value="empty"></option>
+                        </select>
+                    </div>
+                    <div class="row center-row">
+                        <div class="col-md-12 form-group mb-3" id="checkboxes" >
+                            <label class="col-form-label">Orario:</label>
+                            <ul id="checkOra">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-5 form-group text-center">
+                            <button type=submit value="Prenota" class="btn btn-prenota btn-input">Prenota</button>
+                            <span class="submitting"></span>
+                        </div>
+                    </div>
+                    <p id="lbl-state-prenota" class="state-text"></p>
+                </form>
+<!--                </div>-->
             </div>
         </div>
 
@@ -144,25 +125,26 @@
                 <div class="col-md-7">
                     <div class="form-prenota">
                         <h3 class="text-center">Aggiungi Materia</h3>
-                        <form class="mb-5" method="get" name="contactForm" novalidate="novalidate">
+                        <form class="mb-5" method="get" name="contactForm" novalidate="novalidate" onsubmit="return validateFormAggMateria()">
                             <div class="ol-md-12 form-group mb-3">
                                 <div class="ol-md-12 form-group mb-3">
-                                    <label class="col-form-label">Materia:</label><br>
+                                    <label for="nuovaMateria" class="col-form-label">Materia:</label><br>
                                     <input id="nuovaMateria" type="text"/>
                                 </div>
                             </div>
                             <div class="ol-md-12 form-group mb-3">
                                 <div class="ol-md-12 form-group mb-3">
-                                    <label class="col-form-label">Descrizione:</label><br>
+                                    <label for="descrizione" class="col-form-label">Descrizione:</label><br>
                                     <textarea id="descrizione" name="story" rows="5" cols="33"></textarea>
                                 </div>
                             </div>
                             <div class="row justify-content-center">
                                 <div class="col-md-5 form-group text-center">
-                                    <input type=submit value="materia" class="btn btn-block btn-primary rounded-0 py-2 px-4" onclick="aggiungiMateriaClick()">
+                                    <button type=submit value="materia" class="btn btn-prenota btn-input">Aggiungi</button>
                                     <span class="submitting"></span>
                                 </div>
                             </div>
+                            <p id="lbl-state-materia" class="state-text"></p>
                         </form>
                     </div>
                 </div>
@@ -175,25 +157,27 @@
             <div class="col-md-7">
                 <div class="form-prenota">
                     <h3 class="text-center">Aggiungi Docente</h3>
-                    <form class="mb-5" method="get" name="contactForm" novalidate="novalidate">
+                    <form class="mb-5" method="get" name="contactForm" novalidate="novalidate" onsubmit="return validateFormAggDocente()">
                         <div class="ol-md-12 form-group mb-3">
                             <div class="ol-md-12 form-group mb-3">
-                                <label class="col-form-label">Nome:</label><br>
+                                <label for="docenteNome" class="col-form-label">Nome:</label><br>
                                 <input id="docenteNome" type="text"/>
                             </div>
                         </div>
                         <div class="ol-md-12 form-group mb-3">
                             <div class="ol-md-12 form-group mb-3">
-                                <label class="col-form-label">Cognome:</label><br>
+                                <label for="docenteCognome" class="col-form-label">Cognome:</label><br>
                                 <input id="docenteCognome" type="text"/>
                             </div>
                         </div>
                         <div class="row justify-content-center">
                             <div class="col-md-5 form-group text-center">
-                                <input type=submit value="docente" class="btn btn-block btn-primary rounded-0 py-2 px-4" onclick="aggiungiDocenteClick()">
+                                <button type=submit value="docente" class="btn btn-prenota btn-input">Aggiungi</button>
+<!--                                <input type=submit value="docente" class="btn btn-block btn-primary rounded-0 py-2 px-4" onclick="aggiungiDocenteClick()">-->
                                 <span class="submitting"></span>
                             </div>
                         </div>
+                        <p id="lbl-state-docente" class="state-text"></p>
                     </form>
                 </div>
             </div>
@@ -203,8 +187,8 @@
         <div class="container row align-items-stretch justify-content-center no-gutters ">
             <div class="col-md-7">
                 <div class="form-prenota">
-                    <h3 class="text-center">Aggiungi Docente</h3>
-                    <form class="mb-5" method="get" name="contactForm" novalidate="novalidate">
+                    <h3 class="text-center">Inserisci Docente</h3>
+                    <form class="mb-5" method="get" name="contactForm" novalidate="novalidate" onsubmit="return validateFormAggDocMat()">
                         <div class="ol-md-12 form-group mb-3">
                             <div class="ol-md-12 form-group mb-3">
                                 <label class="col-form-label">Materia:</label><br>
@@ -213,7 +197,7 @@
                         </div>
                         <div class="ol-md-12 form-group mb-3">
                             <div class="ol-md-12 form-group mb-3">
-                                <label class="col-form-label" >Insegnante:</label><br>
+                                <label for="selectDocente" class="col-form-label" >Insegnante:</label><br>
                                 <select id="selectDocente">
                                     <option value="empty"></option>
                                 </select>
@@ -221,21 +205,21 @@
                         </div>
                         <div class="row justify-content-center">
                             <div class="col-md-5 form-group text-center">
-                                <input type=submit value="aggiungiDocenteMateria" class="btn btn-block btn-primary rounded-0 py-2 px-4" onclick="aggiungiDocenteMateria()">
+                                <button type=submit value="matDoc" class="btn btn-prenota btn-input">Aggiungi</button>
+<!--                                <input type=submit value="aggiungiDocenteMateria" class="btn btn-block btn-primary rounded-0 py-2 px-4" onclick="aggiungiDocenteMateria()">-->
                                 <span class="submitting"></span>
                             </div>
                         </div>
+                        <p id="lbl-state-mat-doc" class="state-text"></p>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/javascript">
     //TODO: descrizione corso ??
-    let datiConfermaView;
 
     let vueHeader = new Vue({
         el: '#header-wrap',
@@ -256,7 +240,6 @@
         mounted(){
             // console.log("cookie: " + document.cookie);
             authenticate();
-            testFunction();
 
             // if(vueHeader.userType === 'amministratore'){
             //     //pageTitle = "Materie";
@@ -284,579 +267,32 @@
 
     function changeViewPrenota(){
         vue.currentView = "prenota";
-        // if(vueHeader.userType === 'amministratore'){
-        //     vue.pageTitle = "Materie";
-        // }else{
-        //     vue.pageTitle = "Prenota";
-        // }
         setMaterieData();
     }
 
     function changeViewPrenotazioni(){
-        //todo: session control
         vue.pageTitle = "Prenotazioni";
         vue.currentView = "prenotazioni";
         getPrenotazioni();
-    }
-
-    function onPrenotaClick(a){
-        if(vueHeader.userType === 'cliente') {
-            vue.pageTitle = "";
-            vue.materia = a.getAttribute("titolo");
-            vue.currentView = 'confermaPren';
-            setConfermaViewData();
-        }else if(vueHeader.userType === 'amministratore'){
-            alert("Gli amministratori non possono prenotare ripetizioni!");
-        }else{
-            alert("Effettua il LogIn/Registrati per poter effettuare una prenotazione!");
-        }
-    }
-
-    function onConfermaViewClick(){
-        let selectInsegnante = document.getElementById("selectInsegnante");
-        let giorniEl = [];
-        let oreEl = [];
-        let docentiEl = [];
-
-        removeDocentiList();
-        removeCheckboxes();
-        removeGiornoList();
-
-        const weekDays = getNextWeek();
-        let ore = [15,16,17,18,19];
-
-        for(let i = 0; i < datiConfermaView.length; i++) {
-            let obj = datiConfermaView[i];
-            if(selectInsegnante.value === (datiConfermaView[i].nome + " " + datiConfermaView[i].cognome) || selectInsegnante.value === "empty"){
-                let giorni = []
-                weekDays.forEach(function (d){
-                    addTime(giorni, d, new Array())
-                });
-
-                for(let j = 0; j < obj.busyDays.length; j++){
-                    let busy = obj.busyDays[j];
-                    addTime(giorni, busy.day, busy.time);
-                }
-
-                ore = [15,16,17,18,19];
-                for(let k = 0; k < giorni.length; k++) {
-                    ore = [15,16,17,18,19];
-                    if((selectGiorno.value === giorni[k].giorno || selectGiorno.value === 'empty')){
-                        giorni[k].time.forEach(function (o){
-                            if(ore.indexOf(o) !== -1){
-                                ore.splice(ore.indexOf(o), 1);
-                            }
-                        });
-                        ore.forEach(function (o){
-                            if(oreEl.indexOf(o) === -1){
-                                oreEl.push(o);
-                            }
-                        });
-                    }
-
-                    if (!isTimeIn(getCheckedNumber(), giorni[k].time)) {
-                        if(giorniEl.indexOf(giorni[k].giorno) === -1){
-                            giorniEl.push(giorni[k].giorno);
-                        }
-                    }
-                }
-            }
-
-            dict = [];
-            if(selectGiorno.value === 'empty'){
-                getNextWeek().forEach(function (d){
-                    dict[d] = 0;
-                });
-            }
-
-            for(let j = 0; j < obj.busyDays.length; j++) {
-                let busy = obj.busyDays[j]
-
-                if((selectGiorno.value === 'empty' || selectGiorno.value === busy.day) && isChecked(busy.time)){
-                    if(dict[busy.day] === undefined){
-                        dict[busy.day] = 1;
-                    }else{
-                        dict[busy.day]++;
-                    }
-                }
-            }
-
-            let n = getCheckedNumber().length;
-
-            if((n === 0 && Object.keys(dict).length !== 0) || selectGiorno.value === 'empty'){
-                for(let g in dict){
-                    if(dict[g] < 5){
-                        docentiEl.push(datiConfermaView[i].nome + " " + datiConfermaView[i].cognome);
-                        break;
-                    }
-                }
-            }else{
-                if(dict[selectGiorno.value] === undefined){
-                    docentiEl.push(datiConfermaView[i].nome + " " + datiConfermaView[i].cognome);
-                }
-            }
-        }
-
-        addOreList(oreEl);
-        addGiornoList(giorniEl);
-        addDocentiList(docentiEl);
-    }
-
-    function isChecked(time){
-        var checkBoxes = document.getElementsByClassName("timeCheckBox");
-        var ret = true;
-        for(var i = 0; i < checkBoxes.length; i++){
-            if(checkBoxes[i].checked){
-                ret = false;
-                if(checkBoxes[i].value == time){
-                    return true;
-                }
-            }
-        }
-        return ret;
-    }
-
-    function getCheckedNumber(){
-        var checkBoxes = document.getElementsByClassName("timeCheckBox");
-        var n = []
-        for(var i = 0; i < checkBoxes.length; i++){
-            if(checkBoxes[i].checked){
-                n.push(checkBoxes[i].value);
-            }
-        }
-        return n;
-    }
-
-    function isTimeIn(a, time){
-        for(let i = 0; i < a.length; i++){
-            for(let j = 0; j < time.length; j++){
-                if(a[i] == time[j]){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    function removeCheckboxes(){
-        let ul = document.getElementById("checkOra");
-        let bound = 0;
-        while(ul.childNodes.length > bound) {
-            let chkbox = document.getElementsByClassName(ul.lastChild.value);
-            if (chkbox != null && !chkbox[0].checked) {
-                ul.lastChild.remove();
-            }else{
-                bound++;
-            }
-        }
-    }
-
-    function removeDocentiList(){
-        let selectInsegnante = document.getElementById("selectInsegnante");
-        let bound = 1;
-        while(selectInsegnante.childNodes.length > bound){
-            if(selectInsegnante.value !== selectInsegnante.childNodes[bound].value){
-                selectInsegnante.childNodes[bound].remove();
-            }else{
-                bound++;
-            }
-        }
-    }
-
-    function removeGiornoList(){
-        let selectGiorno = document.getElementById("selectGiorno");
-        let bound = 1;
-        while(selectGiorno.childNodes.length > bound){
-            if(selectGiorno.childNodes[bound].value !== selectGiorno.value) {
-                selectGiorno.childNodes[bound].remove();
-            }else{
-                bound++;
-            }
-        }
-    }
-
-    function addGiornoList(gList){
-        let selectGiorno = document.getElementById("selectGiorno");
-        gList.forEach(function (g){
-            if(g !== selectGiorno.value) {
-                let option = document.createElement("option");
-                option.setAttribute("value", g);
-                option.innerHTML = g;
-                selectGiorno.appendChild(option);
-            }
-        });
-    }
-
-    function addDocentiList(dList){
-        let selectInsegnante = document.getElementById("selectInsegnante");
-        dList.forEach(function (d){
-            if(d !== selectInsegnante.value){
-                let option = document.createElement("option");
-                option.setAttribute("value", d);
-                option.innerHTML = d;
-                selectInsegnante.appendChild(option);
-            }
-        });
-    }
-
-    function addOreList(oreList){
-        let ul = document.getElementById("checkOra");
-        oreList.forEach(function (o){
-            // console.log("addOre: " + o);
-            let chb = document.getElementsByClassName(o);
-            if(chb[0] === undefined){
-                let li = document.createElement("li");
-                let input = document.createElement("input");
-                input.setAttribute("class", o + " timeCheckBox");
-                input.setAttribute("type", "checkbox");
-                input.setAttribute("onclick", "onConfermaViewClick()");
-                input.setAttribute("value", o);
-                li.appendChild(input);
-                li.setAttribute("value", o);
-                li.innerHTML = li.innerHTML + (" " + o + "-" + (o + 1));
-
-                ul.appendChild(li);
-            }
-        });
-    }
-
-    function loadConfermaView(){
-        let selectInsegnante = document.getElementById("selectInsegnante");
-        let selectGiorno = document.getElementById("selectGiorno");
-        let ul = document.getElementById("checkOra");
-
-        removeCheckboxes();
-        removeGiornoList();
-        removeDocentiList();
-
-        getNextWeek().forEach(function (d){
-            let option = document.createElement("option");
-            option.setAttribute("value", d);
-            option.innerHTML = d;
-            selectGiorno.appendChild(option);
-        });
-
-        for(let i = 15; i <= 19; i++){
-            let li = document.createElement("li");
-            let input = document.createElement("input");
-            input.setAttribute("class", i + " timeCheckBox");
-            input.setAttribute("type", "checkbox");
-            input.setAttribute("onclick", "onConfermaViewClick()");
-            input.setAttribute("value", i);
-            li.appendChild(input);
-            li.setAttribute("value", i);
-            li.innerHTML = li.innerHTML + (" " + i + "-" + (i + 1));
-
-            ul.appendChild(li);
-        }
-
-        datiConfermaView.forEach(function (d){
-            let option = document.createElement("option");
-            option.setAttribute("value", d.nome + " " + d.cognome);
-            option.innerHTML = d.nome + " " + d.cognome;
-            selectInsegnante.appendChild(option);
-        });
-    }
-
-    function setConfermaViewData(){
-        let weekDays = getNextWeek();
-        $.getJSON("docenti", {from: weekDays[0], to: weekDays[4], materia: vue.materia}, function(data){
-            datiConfermaView = data;
-            loadConfermaView();
-        });
-    }
-
-    function getNextWeek(date = new Date()) {
-        const dateCopy = new Date(date.getTime());
-        var weekDays = []
-
-        const nextMonday = new Date(
-            dateCopy.setDate(
-                dateCopy.getDate() + ((7 - dateCopy.getDay() + 1) % 7 || 7),
-            ),
-        );
-
-        let current = nextMonday;
-
-        for (var i = 0; i < 5; i++) {
-            weekDays.push(current.getFullYear() + "-" + (current.getMonth() + 1) + "-" + current.getDate());
-            current.setDate(current.getDate() + 1);
-        }
-
-        return weekDays;
-    }
-
-    function addTime(giorni, g, t){
-        exist = false;
-        for(let k = 0; k < giorni.length; k++){
-            if(giorni[k].giorno === g){
-                exist = true;
-                giorni[k].time.push(t);
-            }
-        }
-        if(!exist){
-            giorni.push({
-                giorno: g,
-                time: [t]
-            });
-        }
-    }
-
-    function setMaterieData(){
-        var ul = document.getElementById("lista-materie");
-
-        if(ul != null){
-            while(ul.childNodes.length > 1){
-                ul.lastChild.remove();
-            }
-        }
-
-
-        $.getJSON("ripetizioni", {}, function(data){
-            let ul = document.getElementById("lista-materie");
-
-            for(let i = 0; i < data.length; i++) {
-                let obj = data[i];
-
-                let li = document.createElement("li");
-                li.setAttribute("class", "table-row")
-
-                let firstCol = document.createElement("div");
-                firstCol.setAttribute("class", "col col-1");
-                firstCol.setAttribute("data-label", "Materia");
-                firstCol.innerHTML = obj.titolo;
-
-                let secondCol = document.createElement("div");
-                secondCol.setAttribute("class", "col col-2");
-                secondCol.setAttribute("data-label", "Insegnante");
-                secondCol.innerHTML = obj.insegnanti.join(", ");
-
-                let thirdCol = document.createElement("div");
-                thirdCol.setAttribute("class", "col col-3");
-
-                if(vueHeader.userType === 'amministratore'){
-                    let btnCancella = document.createElement("button");
-                    btnCancella.setAttribute("class", "btn prenotazioni-btn-cancella");
-                    btnCancella.setAttribute("onclick", "cancellaMateria('" + obj.titolo + "')");
-                    btnCancella.innerHTML = "cancella";
-                    let btnAggiungi = document.createElement("button");
-                    btnAggiungi.setAttribute("class", "btn prenotazioni-btn-effettuata");
-                    btnAggiungi.setAttribute("onclick", "aggiungiDocenteMateriaView('" + obj.titolo + "')");
-                    btnAggiungi.innerHTML = "+ docente";
-                    thirdCol.setAttribute("class", "col-margin col col-2");
-                    thirdCol.appendChild(btnAggiungi);
-                    thirdCol.appendChild(btnCancella);
-                }else {
-                    let btnPrenota = document.createElement("button");
-                    btnPrenota.setAttribute("class", "btn btn-prenota");
-                    btnPrenota.setAttribute("titolo", obj.titolo);
-                    btnPrenota.setAttribute("onclick", "onPrenotaClick(this)");
-                    btnPrenota.innerHTML = "Prenota";
-                    thirdCol.appendChild(btnPrenota);
-                }
-
-                li.appendChild(firstCol);
-                li.appendChild(secondCol);
-                li.appendChild(thirdCol);
-
-                ul.appendChild(li);
-            }
-        });
-    }
-
-    function getPrenotazioni(){
-        let ul = document.getElementById("lista-prenotazioni");
-
-        if(ul != null){
-            while(ul.childNodes.length > 1){
-                ul.lastChild.remove();
-            }
-        }
-
-        $.getJSON("prenotazioniUtente", {}, function (data){
-            let ul = document.getElementById("lista-prenotazioni");
-
-            for(let i = 0; i < data.length; i++) {
-                let li = document.createElement("li");
-                li.setAttribute("class", "table-row");
-
-                let div1 = document.createElement("div");
-                div1.setAttribute("class", "col-margin col col-2");
-                div1.innerHTML = data[i].corso;
-
-                let div2 = document.createElement("div");
-                div2.setAttribute("class", "col-margin col col-2");
-                div2.innerHTML = data[i].nomeDocente + " " + data[i].cognomeDocente;
-
-                let div3 = document.createElement("div");
-                div3.setAttribute("class", "col-margin col col-2");
-                div3.innerHTML = data[i].data + "<br>" + data[i].ora + "-" + (data[i].ora + 1);
-
-                let div4;
-                div4 = document.createElement("div");
-                div4.setAttribute("class", "col-margin col col-2");
-                if(data[i].stato === "attiva"){
-                    let btnCancella = document.createElement("button");
-                    btnCancella.setAttribute("class", "btn prenotazioni-btn-cancella");
-                    btnCancella.setAttribute("onclick", "cambiaPrenStato(" + data[i].idPrenotazione + ",  'cancellata')");
-                    btnCancella.innerHTML = "cancella";
-                    let btnEffettuata = document.createElement("button");
-                    if(vueHeader.userType === 'cliente') {
-                        btnEffettuata.setAttribute("class", "btn prenotazioni-btn-effettuata");
-                        btnEffettuata.setAttribute("onclick", "cambiaPrenStato(" + data[i].idPrenotazione + ", 'effettuata')");
-                        btnEffettuata.innerHTML = "effettuata";
-                        div4.appendChild(btnEffettuata);
-                    }
-                    div4.appendChild(btnCancella);
-                }else{
-                    div4.innerHTML = data[i].stato;
-                }
-
-                li.appendChild(div1);
-                li.appendChild(div2);
-                li.appendChild(div3);
-                li.appendChild(div4);
-
-                ul.appendChild(li);
-            }
-        });
-    }
-
-    function cambiaPrenStato(idPren, state){
-        if(state === 'effettuata' || state === 'cancellata'){
-            $.get("cambiaStato", {idPrenotazione: idPren, newState: state}, function (data){
-                location.reload();
-            });
-        }
-    }
-
-    function prenota(){
-        let docente = document.getElementById("selectInsegnante").value.split(" ");
-        let dataPren = document.getElementById("selectGiorno").value;
-        let checkBoxes = document.getElementsByClassName("timeCheckBox");
-        let ore = "";
-
-        for(var i = 0; i < checkBoxes.length; i++){
-            if(checkBoxes[i].checked){
-                ore += checkBoxes[i].value + "-";
-            }
-        }
-        ore = ore.slice(0, -1);
-
-        $.get("prenota", {corso: vue.materia, nome: docente[0], cognome: docente[1], data: dataPren, ora: ore}, function (data){
-            console.log(data);
-        });
     }
 
     function aggiungiMateriaView(){
         vue.currentView = 'aggiungiMateria';
     }
 
-    function aggiungiDocenteView(){
+    function docentiView(){
         vue.currentView = 'docente';
         vue.pageTitle = 'docenti';
     }
 
-    function aggiungiDocenteClick(){
-        let inputNome = document.getElementById("docenteNome");
-        let inputCognome = document.getElementById("docenteCognome");
-
-        $.get("aggiungiDocente", {nome: inputNome.value, cognome: inputCognome.value}, function (data){
-            if(data !== "202"){
-                alert("Il docente inserito esiste giá");
-            }
-        });
-    }
-
-    function loadDocentiViewData(){
-        let ul = document.getElementById("lista-docenti");
-        $.getJSON("docenti", {}, function (data){
-            for(let i = 0; i < data.length; i++) {
-                let obj = data[i];
-
-                let li = document.createElement("li");
-                li.setAttribute("class", "table-row")
-
-                let firstCol = document.createElement("div");
-                firstCol.setAttribute("class", "col col-1");
-                firstCol.setAttribute("data-label", "Docente");
-                firstCol.innerHTML = obj.nome + " " + obj.cognome;
-
-                let secondCol = document.createElement("div");
-                secondCol.setAttribute("class", "col col-2");
-                secondCol.setAttribute("data-label", "Materie");
-                secondCol.innerHTML = obj.materie.join(", ");
-
-                let thirdCol = document.createElement("div");
-                thirdCol.setAttribute("class", "col col-3");
-
-                let btnCancella = document.createElement("button");
-                btnCancella.setAttribute("class", "btn prenotazioni-btn-cancella");
-                btnCancella.setAttribute("onclick", "rimuoviDocente('" + obj.idDocente + "')");
-                btnCancella.innerHTML = "cancella";
-                // let btnAggiungi = document.createElement("button");
-                // btnAggiungi.setAttribute("class", "btn prenotazioni-btn-effettuata");
-                // btnAggiungi.setAttribute("onclick", "aggiungiDocenteMateriaView('" + obj.titolo + "')");
-                // btnAggiungi.innerHTML = "+ docente";
-                // thirdCol.setAttribute("class", "col-margin col col-2");
-                // thirdCol.appendChild(btnAggiungi);
-                thirdCol.appendChild(btnCancella);
-
-                li.appendChild(firstCol);
-                li.appendChild(secondCol);
-                li.appendChild(thirdCol);
-
-                ul.appendChild(li);
-            }
-        });
-    }
-
-    function aggiungiDocente(){
+    function aggiungiDocenteView(){
         vue.currentView = "aggiungiDocente";
     }
 
-    function rimuoviDocente(docente){
-        $.get("cancellaDocente", {idDocente: docente}, function (data){});
-    }
-
-    function aggiungiMateriaClick(){
-        let inputMateria = document.getElementById("nuovaMateria");
-        let inputDescrizione = document.getElementById("descrizione");
-
-        $.get("aggiungiMateria", {materia: inputMateria.value, descrizione: inputDescrizione.value}, function (data){
-            if(data !== "202"){
-                alert("La materia inserita esiste giá");
-            }
-        });
-    }
-
-    function cancellaMateria(m){
-        $.get("cancellaMateria", {materia: m}, function (){
-            location.reload();
-        });
-    }
-
-    function aggiungiDocenteMateria(){
-        let select = document.getElementById("selectDocente");
-        let docente = select.value.split(" ");
-        let m = vue.materia;
-
-        $.post("docenteMateria", {nome: docente[0], cognome: docente[1], materia: m}, function (){});
-    }
-
-    function aggiungiDocenteMateriaView(m){
+    function changeDocenteMateriaView(m){
         vue.currentView = "aggiungiDocenteMateria";
         vue.materia = m;
-        $.getJSON("docenteMateria", {materia: m}, function (data){
-            console.log(data);
-            for(let i = 0; i < data.length; i++) {
-                let select = document.getElementById("selectDocente");
-                let option = document.createElement("option");
-                option.setAttribute("value", data[i].nome + " " + data[i].cognome);
-                option.innerHTML = data[i].nome + " " + data[i].cognome;
-                select.appendChild(option);
-            }
-        });
+        loadDocenteMateriaView(m);
     }
 
     function logIn(){
@@ -867,6 +303,10 @@
         $.get("logOut", {}, function (){
             location.reload();
         });
+    }
+
+    function onSignUpClick(){
+        location.href = "logIn.html#signup";
     }
 
     function authenticate(){

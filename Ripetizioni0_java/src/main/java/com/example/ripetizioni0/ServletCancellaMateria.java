@@ -33,7 +33,7 @@ public class ServletCancellaMateria extends HttpServlet {
             return;
         }
 
-        dao.removeMateria(materia);
+        dao.rimuoviMateria(materia);
         out.print("202");
     }
 }

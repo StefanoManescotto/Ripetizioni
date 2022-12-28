@@ -8,6 +8,8 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 @WebServlet(name = "LogIn", value = "/logIn")
 public class ServletLogIn extends HttpServlet {
     DAO dao;
@@ -22,43 +24,30 @@ public class ServletLogIn extends HttpServlet {
         PrintWriter out = response.getWriter();
         String userEmail = request.getParameter("email");
         String password = request.getParameter("password");
-        // String sessionID = request.getParameter("sessione");
-        //System.out.println("Test Authetication " + userEmail + " " + password);
 
-        if(userEmail != null && password != null){
-            utente = dao.getUtente(userEmail);
-
-            if(utente == null || utente.getPassword().compareTo(request.getParameter("password")) != 0 ){
-                System.out.println("Authentication failed");
-                out.print("User Not Found");
-                return;
-            }
+        if(userEmail == null || password == null){
+            out.print("400");
+            return;
         }
-        //System.out.println("Authentication successful");
+
+        utente = dao.getUtente(userEmail);
+
+        if(utente == null || !utente.getPassword().equals(DigestUtils.sha256Hex(password).toUpperCase())){
+            out.print("User Not Found");//TODO: change this to 400
+            return;
+        }
+
         HttpSession s = request.getSession();
         String jsessionID = s.getId();
 
         Cookie cookie = new Cookie("sessionId", jsessionID);
         cookie.setMaxAge(60 * 30);
         response.addCookie(cookie);
-//        System.out.println("JSessionID:" + jsessionID);
-//        System.out.println("sessionID ricevuto:" + sessionID);
-//        System.out.println("userName ricevuto:" + userEmail);
 
         s.setAttribute("userId", utente.getId());
         s.setAttribute("userEmail", utente.getEmail());
         s.setAttribute("type", utente.getRuolo());
 
         out.print("authenticated");
-//        out.println("{" +
-//                "'response': authenticated" +
-//                "}");
-//        if(sessionID != null && jsessionID.equals(sessionID)){
-//            //System.out.println("sessione riconosciuta!");
-//            out.print("sessione riconosciuta!");
-//        }else{
-//            //System.out.println(jsessionID);
-//            out.print(jsessionID);
-//        }
     }
 }

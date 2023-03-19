@@ -29,11 +29,11 @@ public class ServletCancellaMateria extends HttpServlet {
         materia = request.getParameter("materia");
 
         if(materia == null){
-            out.print("wrong parameters");
+            out.print("400");
             return;
         }
 
         dao.rimuoviMateria(materia);
-        out.print("202");
+        out.print("200");
     }
 }

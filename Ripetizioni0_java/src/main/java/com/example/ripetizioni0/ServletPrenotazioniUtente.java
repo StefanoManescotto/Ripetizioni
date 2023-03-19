@@ -35,20 +35,4 @@ public class ServletPrenotazioniUtente extends HttpServlet {
             out.println(json);
         }
     }
-
-
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        PrintWriter out = response.getWriter();
-//        HttpSession s = request.getSession();
-//        Cookie[] cookies = request.getCookies();
-//
-//        if(!ServletAuthenticate.isAuthenticated(cookies, s)){
-//            out.print("401");
-//            return;
-//        }
-//
-//        if(s.getAttribute("type").toString().equals("cliente")){
-//
-//        }
-//    }
 }

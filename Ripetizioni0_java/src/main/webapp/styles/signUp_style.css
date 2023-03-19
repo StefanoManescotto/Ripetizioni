@@ -1,13 +1,8 @@
 /* ===== Google Font Import - Poformsins ===== */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-html.login-view{
-    background-color: #cbcbcb;
-}
-
-#logInBody{
+#signUpBody{
     height: 100vh;
-    padding-bottom: -50px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,7 +10,7 @@ html.login-view{
     font-family: 'Poppins', sans-serif;
 }
 
-.container-logIn{
+.container-signUp{
     margin-top: -150px;
     position: relative;
     max-width: 430px;
@@ -26,7 +21,7 @@ html.login-view{
     overflow: hidden;
 }
 
-.container-logIn .forms-logIn{
+.container-signUp .forms-logIn{
     display: flex;
     align-items: center;
     height: 450px;
@@ -35,32 +30,29 @@ html.login-view{
 }
 
 
-.container-logIn .form-logIn{
-    width: 50%;
+.container-signUp .form-logIn{
+    width: 100%;
     padding: 30px;
     background-color: #fff;
     transition: margin-left 0.18s ease;
 }
 
-.container-logIn.active .login{
+.container-signUp.active .login{
     margin-left: -50%;
     opacity: 0;
     transition: margin-left 0.18s ease, opacity 0.15s ease;
 }
 
-.container-logIn .signup{
-    opacity: 0;
-    transition: opacity 0.09s ease;
-}
-.container-logIn.active .signup{
+.container-signUp .signup{
     opacity: 1;
     transition: opacity 0.2s ease;
 }
 
-.container-logIn.active .forms-logIn{
+.container-signUp.active .forms-logIn{
     height: 670px;
 }
-.container-logIn .form-logIn .title{
+
+.container-signUp .form-logIn .title{
     position: relative;
     font-size: 27px;
     font-weight: 600;
@@ -115,6 +107,7 @@ html.login-view{
     font-size: 16px;
     transition: all 0.2s ease;
 }
+
 
 .input-field em{
     margin-left: 5px;

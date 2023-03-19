@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
     <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/logIn_style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
@@ -17,6 +18,7 @@
     <script type="text/javascript" src="js/prenotazioniView.js"></script>
     <script type="text/javascript" src="js/materieView.js"></script>
     <script type="text/javascript" src="js/docenteMateriaView.js"></script>
+    <script type="text/javascript" src="js/logIn.js"></script>
 </head>
 
 <header class="header-fixed">
@@ -26,12 +28,13 @@
                 <button class="nav-btn navbar-brand" onclick="changeViewPrenota()">Ripetizioni</button>
                 <div class="collapse navbar-collapse" id="navcol-1">
                     <ul class="nav navbar-nav form-inline mr-auto">
-                        <li class="nav-item" role="presentation"><button class="nav-btn nav-link" onclick="changeViewPrenota()">Prenota</button></li>
+                        <li class="nav-item" role="presentation" v-if="userType !== 'amministratore'"><button class="nav-btn nav-link" onclick="changeViewPrenota()">Prenota</button></li>
+                        <li class="nav-item" role="presentation" v-if="userType === 'amministratore'"><button class="nav-btn nav-link" onclick="changeViewPrenota()">Materie</button></li>
                         <li class="nav-item" role="presentation" v-if="userType === 'cliente' || userType === 'amministratore'"><button class="nav-link nav-btn" onclick="changeViewPrenotazioni()">Prenotazioni</button></li>
                         <li class="nav-item" role="presentation" v-if="userType === 'amministratore'"><button class="nav-link nav-btn" onclick="docentiView()" >Docenti</button></li>
                     </ul>
                     <div v-if="userType === 'ospite'">
-                        <span class="navbar-text"><button onclick="logIn()" class="login nav-btn nav-link">Log In</button></span>
+                        <span class="navbar-text"><button onclick="onLogInClick()" class="login nav-btn nav-link">Log In</button></span>
                         <button class="btn-prenota btn" onclick="onSignUpClick()">Sign Up</button>
                     </div>
                     <div v-if="userType === 'cliente' || userType === 'amministratore'">
@@ -49,7 +52,9 @@
     <div class="container">
         <h2 class="page-title">{{ pageTitle }}</h2>
         <div v-if="currentView === 'prenota'" id="prenota">
-            <div class="col btn-aggiungi" v-if="vueHeader.userType === 'amministratore'"><button class="btn btn-prenota" onclick="aggiungiMateriaView()">Aggiungi Materia</button></div>
+            <div class="col btn-aggiungi" v-if="vueHeader.userType === 'amministratore'">
+                <button class="btn btn-prenota" onclick="aggiungiMateriaView()">Aggiungi Materia</button>
+            </div>
             <ul class="responsive-table" id="lista-materie">
                 <li class="table-header">
                     <div class="col">Materia</div>
@@ -81,7 +86,6 @@
         </div>
 
         <div class="content container row align-items-stretch justify-content-center no-gutters" v-if="currentView === 'confermaPren'">
-<!--            <div class="container row align-items-stretch justify-content-center no-gutters">-->
             <div class="col-md-7 form-prenota">
                 <h3 class="text-center">Conferma Prenotazione</h3>
                 <form class="mb-5" method="get" id="contactForm conferma-form" name="contactForm" novalidate="novalidate" onsubmit="return validateFormConferma()">
@@ -116,7 +120,6 @@
                     </div>
                     <p id="lbl-state-prenota" class="state-text"></p>
                 </form>
-<!--                </div>-->
             </div>
         </div>
 
@@ -173,7 +176,6 @@
                         <div class="row justify-content-center">
                             <div class="col-md-5 form-group text-center">
                                 <button type=submit value="docente" class="btn btn-prenota btn-input">Aggiungi</button>
-<!--                                <input type=submit value="docente" class="btn btn-block btn-primary rounded-0 py-2 px-4" onclick="aggiungiDocenteClick()">-->
                                 <span class="submitting"></span>
                             </div>
                         </div>
@@ -183,10 +185,15 @@
             </div>
         </div>
     </div>
+
     <div class="content" v-if="currentView === 'aggiungiDocenteMateria'">
         <div class="container row align-items-stretch justify-content-center no-gutters ">
             <div class="col-md-7">
-                <div class="form-prenota">
+                <div class="add-remove-button">
+                    <button onclick="setAggiungiView()">Inserisci</button>
+                    <button onclick="setRimuoviView()">Rimuovi</button>
+                </div>
+                <div v-if="aggRim === 'aggiungi'" class="form-prenota">
                     <h3 class="text-center">Inserisci Docente</h3>
                     <form class="mb-5" method="get" name="contactForm" novalidate="novalidate" onsubmit="return validateFormAggDocMat()">
                         <div class="ol-md-12 form-group mb-3">
@@ -206,12 +213,75 @@
                         <div class="row justify-content-center">
                             <div class="col-md-5 form-group text-center">
                                 <button type=submit value="matDoc" class="btn btn-prenota btn-input">Aggiungi</button>
-<!--                                <input type=submit value="aggiungiDocenteMateria" class="btn btn-block btn-primary rounded-0 py-2 px-4" onclick="aggiungiDocenteMateria()">-->
                                 <span class="submitting"></span>
                             </div>
                         </div>
                         <p id="lbl-state-mat-doc" class="state-text"></p>
                     </form>
+                </div>
+
+                <div v-if="aggRim === 'rimuovi'" class="form-prenota">
+                    <h3 class="text-center">Rimuovi Docente</h3>
+                    <form class="mb-5" method="get" name="contactForm" novalidate="novalidate" onsubmit="return validateFormRimDocMat()">
+                        <div class="ol-md-12 form-group mb-3">
+                            <div class="ol-md-12 form-group mb-3">
+                                <label class="col-form-label">Materia:</label><br>
+                                <label class="">{{ materia }}</label>
+                            </div>
+                        </div>
+                        <div class="ol-md-12 form-group mb-3">
+                            <div class="ol-md-12 form-group mb-3">
+                                <label for="selectDocenteRim" class="col-form-label" >Insegnante:</label><br>
+                                <select id="selectDocenteRim">
+                                    <option value="empty"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-5 form-group text-center">
+                                <button type=submit value="matDoc" class="btn btn-prenota btn-input">Rimuovi</button>
+                                <span class="submitting"></span>
+                            </div>
+                        </div>
+                        <p id="lbl-state-mat-doc2" class="state-text"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="content loginBox" v-if="currentView === 'login'">
+        <div id="logInBody">
+            <div class="container-logIn">
+                <div class="forms-logIn">
+                    <div role="form" class="form-logIn login">
+                        <span class="title">Log In</span><br>
+                        <label id="testlabel" for="loginEmail" class="label">Email *</label>
+                        <div class="input-field">
+                            <input type="text" placeholder="Email" required id="loginEmail" aria-required="true"
+                                   autocomplete="email" aria-label="Email" aria-invalid="false" aria-labelledby="testlabel">
+                            <em class="uil uil-envelope icon"></em>
+                        </div>
+                        <label id="testlabel2" for="loginPassword" class="label">Password *</label>
+                        <div class="input-field">
+                            <input type="password" class="password" placeholder="Password" required id="loginPassword"
+                                   autocomplete="current-password" aria-required="true" aria-label="Password *" aria-invalid="false">
+                            <em class="uil uil-lock icon"></em>
+                            <em class="uil uil-eye-slash showHidePw"></em>
+                        </div>
+                        <div class="input-field button-logIn">
+                            <button class="btnLogIn" value="Login" onclick="logIn()">LogIn</button>
+                        </div>
+                        <div role="region" aria-live="polite" aria-describedby="lbl-status" id="val1">
+                            <p id="lbl-status" class="state-text"></p>
+                        </div>
+                        <div class="login-signup">
+                            <span class="text">Non sei registrato?
+                                <a href="registrazione.html" class="text signup-link"><u>Registrati Ora</u></a>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -219,8 +289,6 @@
 </div>
 
 <script type="text/javascript">
-    //TODO: descrizione corso ??
-
     let vueHeader = new Vue({
         el: '#header-wrap',
         data: {
@@ -235,39 +303,74 @@
             currentView: 'prenota',
             materia: "",
             pageTitle: "Prenota",
+            aggRim: 'aggiungi',
+            dataContainer: [],
+            dataContainer2: '',
             vueHeader: vueHeader
         },
         mounted(){
-            // console.log("cookie: " + document.cookie);
             authenticate();
-
-            // if(vueHeader.userType === 'amministratore'){
-            //     //pageTitle = "Materie";
-            // }//else if(vueHeader.userType === 'ospite'){
-            //     console.log("HERE OSPITE")
-            //     setMaterieData();
-            // }
-            //changeViewPrenota();
-            //pageTitle = "prenota";
         },
         updated(){
+            if(vue.currentView === 'login'){
+                $.get("authenticate", {}, function (data){
+                    if(data !== '401'){
+                        location.href = "index.html";
+                    }
+                });
+
+                var html = document.querySelector("html");
+                html.classList.add("login-view");
+            }else{
+                var html = document.querySelector("html");
+                html.classList.remove("login-view");
+            }
             if(vue.currentView === 'prenota' && vueHeader.userType === 'amministratore'){
                 vue.pageTitle = 'Materie';
             }else if(vue.currentView === 'prenota'){
                 vue.pageTitle = 'Prenota';
             }else if(vue.currentView === 'docente'){
                 loadDocentiViewData();
+            }else if(vue.currentView === 'aggiungiDocenteMateria'){
+                if(vue.aggRim === 'aggiungi'){
+                    addDocMat(vue.dataContainer);
+                }else{
+                    rimDocMat(vue.dataContainer2.split(","));
+                }
             }
         }
-        // methods: {
-        // }
     })
 
-    changeViewPrenota();
+    const type = window.location.hash.slice(1);
+    if(type === "login"){
+        onLogInClick();
+    }else if(type === "signup"){
+        const params = new URLSearchParams(window.location.search)
+        $.post('signUp', {
+            nome: params.get("nome"),
+            cognome: params.get("cognome"),
+            email: params.get("email"),
+            password: params.get("password")
+        }, function (data) {
+            if (data === "200") {
+                executeLogIn(params.get("email"), params.get("password"));
+            }
+        });
+    }else{
+        changeViewPrenota();
+    }
 
     function changeViewPrenota(){
         vue.currentView = "prenota";
         setMaterieData();
+    }
+
+    function setAggiungiView(){
+        vue.aggRim = "aggiungi";
+    }
+
+    function setRimuoviView(){
+        vue.aggRim = "rimuovi";
     }
 
     function changeViewPrenotazioni(){
@@ -282,21 +385,24 @@
 
     function docentiView(){
         vue.currentView = 'docente';
-        vue.pageTitle = 'docenti';
+        vue.pageTitle = 'Docenti';
     }
 
     function aggiungiDocenteView(){
         vue.currentView = "aggiungiDocente";
     }
 
-    function changeDocenteMateriaView(m){
+    function changeDocenteMateriaView(materia, insegnanti){
         vue.currentView = "aggiungiDocenteMateria";
-        vue.materia = m;
-        loadDocenteMateriaView(m);
+        vue.aggRim = 'aggiungi';
+        vue.materia = materia;
+        vue.dataContainer2 = insegnanti;
+        loadDocenteMateriaView(materia);
     }
 
-    function logIn(){
-        location.href = "logIn.html";
+    function onLogInClick(){
+        vue.currentView = "login";
+        vue.pageTitle = "";
     }
 
     function logOut(){
@@ -306,18 +412,15 @@
     }
 
     function onSignUpClick(){
-        location.href = "logIn.html#signup";
+        location.href = "registrazione.html";
     }
 
     function authenticate(){
         $.get("authenticate", {}, function (data){
-            if(data === 'not authenticated'){
-                console.log("not authenticated " + data);
+            if(data === '401'){
                 vueHeader.userType = "ospite";
             }else{
-                console.log("authenticated " + data);
                 let jsonData = JSON.parse(data);
-                console.log("authenticated " + jsonData.email + " " + jsonData.type);
                 vueHeader.userEmail = jsonData.email;
                 vueHeader.userType = jsonData.type;
             }

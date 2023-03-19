@@ -3,14 +3,11 @@ package com.example.ripetizioni0;
 import com.example.ripetizioni0.DAO.Corso;
 import com.example.ripetizioni0.DAO.DAO;
 import com.example.ripetizioni0.DAO.Docente;
-import com.example.ripetizioni0.DAO.Prenotazione;
 import com.google.gson.Gson;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 
-import javax.print.Doc;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 

@@ -1,47 +1,22 @@
-$.get("authenticate", {}, function (data){
-    if(data !== 'not authenticated'){
-        location.href = "index.html";
-    }
-});
+function logIn(){
+    let emailInput = document.getElementById("loginEmail");
+    let passwordInput = document.getElementById("loginPassword");
 
-
-const container = document.querySelector(".container-logIn"),
-      pwShowHide = document.querySelectorAll(".showHidePw"),
-      pwFields = document.querySelectorAll(".password");
-
-const type = window.location.hash.slice(1);
-
-if(type === "signup"){
-    container.classList.add("active");
-}else{
-    container.classList.remove("active");
+    executeLogIn(emailInput.value, passwordInput.value);
 }
 
-// js code to show/hide password and change icon
-pwShowHide.forEach(eyeIcon =>{
-    eyeIcon.addEventListener("click", ()=>{
-        pwFields.forEach(pwField =>{
-            if(pwField.type ==="password"){
-                pwField.type = "text";
-
-                pwShowHide.forEach(icon =>{
-                    icon.classList.replace("uil-eye-slash", "uil-eye");
-                })
-            }else{
-                pwField.type = "password";
-
-                pwShowHide.forEach(icon =>{
-                    icon.classList.replace("uil-eye", "uil-eye-slash");
-                })
+function executeLogIn(m, psw){
+    if(m !== "" && psw !== "") {
+        $.post('logIn', {email: m, password: psw}, function (data) {
+            if (data === '200') {
+                location.href = "index.html";
+            } else {
+                let lbl = document.getElementById("lbl-status");
+                lbl.innerHTML = "Autenticazione fallita: riprova"
             }
-        })
-    })
-})
-
-function openSignUpWindow(){
-    container.classList.add("active");
-}
-
-function openLogInWindow(){
-    container.classList.remove("active");
+        });
+    }else{
+        let lbl = document.getElementById("lbl-status");
+        lbl.innerHTML = "Riempi tutti i campi per proseguire"
+    }
 }

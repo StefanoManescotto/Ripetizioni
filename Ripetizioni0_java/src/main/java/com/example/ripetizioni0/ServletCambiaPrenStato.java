@@ -21,7 +21,7 @@ public class ServletCambiaPrenStato extends HttpServlet {
         Cookie[] cookies = request.getCookies();
 
         if(!ServletAuthenticate.isAuthenticated(cookies, s)){
-            out.print("402");
+            out.print("401");
             return;
         }
 
@@ -29,12 +29,12 @@ public class ServletCambiaPrenStato extends HttpServlet {
         if(request.getParameter("newState").equals("cancellata") || request.getParameter("newState").equals("effettuata")){
             if(dao.cambiaPrenStato(Integer.parseInt(request.getParameter("idPrenotazione")), request.getParameter("newState"), Integer.parseInt(s.getAttribute("userId").toString()),
                     s.getAttribute("type").toString())){
-                out.print("202");
+                out.print("200");
             }else{
-                out.print("error");
+                out.print("400");
             }
         }else{
-            out.print("wrong parameter");
+            out.print("400");
         }
     }
 }

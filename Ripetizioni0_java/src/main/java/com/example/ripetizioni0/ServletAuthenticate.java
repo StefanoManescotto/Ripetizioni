@@ -18,11 +18,10 @@ public class ServletAuthenticate extends HttpServlet {
     }
 
     private void isAuthenticated(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        AuthData auth = getAuthData(request, response);
+        AuthData auth = getAuthData(request);
         PrintWriter out = response.getWriter();
-
         if(auth == null){
-            out.print("not authenticated");
+            out.print("401");
             return;
         }
         Gson gson = new Gson();
@@ -30,13 +29,14 @@ public class ServletAuthenticate extends HttpServlet {
         out.println(json);
     }
 
-    private AuthData getAuthData(HttpServletRequest request, HttpServletResponse response){
+    private AuthData getAuthData(HttpServletRequest request){
         AuthData authData = null;
         HttpSession s = request.getSession();
         Cookie[] cookies = request.getCookies();
 
         if(isAuthenticated(cookies, s)){
-            authData = new AuthData(s.getAttribute("userEmail").toString(), s.getAttribute("type").toString());
+            authData = new AuthData(s.getAttribute("userName").toString(), s.getAttribute("userSurname").toString(),
+                    s.getAttribute("userEmail").toString(), s.getAttribute("type").toString());
         }
         return authData;
     }
@@ -44,7 +44,7 @@ public class ServletAuthenticate extends HttpServlet {
     public static boolean isAuthenticated(Cookie[] cookies, HttpSession session){
         if(cookies != null) {
             for (Cookie c : cookies) {
-                if (c.getName().equals("sessionId") && c.getValue().equals(session.getId())) {
+                if ((c.getName().equals("sessionId")) && c.getValue().trim().equals(session.getId().trim())) {
                     return true;
                 }
             }
@@ -53,10 +53,14 @@ public class ServletAuthenticate extends HttpServlet {
     }
 
     class AuthData{
+        public String name;
+        public String surname;
         public String email;
         public String type;
 
-        public AuthData(String email, String type){
+        public AuthData(String name, String surname, String email, String type){
+            this.name = name;
+            this.surname = surname;
             this.email = email;
             this.type = type;
         }

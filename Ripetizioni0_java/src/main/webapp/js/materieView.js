@@ -36,8 +36,8 @@ function setMaterieData(){
                 btnCancella.innerHTML = "cancella";
                 let btnAggiungi = document.createElement("button");
                 btnAggiungi.setAttribute("class", "btn prenotazioni-btn-effettuata");
-                btnAggiungi.setAttribute("onclick", "changeDocenteMateriaView('" + obj.titolo + "')");
-                btnAggiungi.innerHTML = "+ docente";
+                btnAggiungi.setAttribute("onclick", "changeDocenteMateriaView('" + obj.titolo + "', '" + obj.insegnanti + "')");
+                btnAggiungi.innerHTML = "-/+ docente";
                 thirdCol.setAttribute("class", "col-margin col col-2");
                 thirdCol.appendChild(btnAggiungi);
                 thirdCol.appendChild(btnCancella);
@@ -64,7 +64,7 @@ function aggiungiMateriaClick(){
     let inputDescrizione = document.getElementById("descrizione");
 
     $.get("aggiungiMateria", {materia: inputMateria.value, descrizione: inputDescrizione.value}, function (data){
-        if(data !== "202"){
+        if(data !== "200"){
             alert("La materia inserita esiste giá");
         }
     });

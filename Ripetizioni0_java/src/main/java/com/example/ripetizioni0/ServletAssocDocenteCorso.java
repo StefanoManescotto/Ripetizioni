@@ -18,16 +18,38 @@ public class ServletAssocDocenteCorso extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
 
+        HttpSession s = request.getSession();
+        Cookie[] cookies = request.getCookies();
+
+        String op = request.getParameter("operazione");
+
+        if(!ServletAuthenticate.isAuthenticated(cookies, s) || !s.getAttribute("type").equals("amministratore")){
+            out.print("401");
+            return;
+        }
+
         String nome, cognome, corso;
         nome = request.getParameter("nome");
         cognome = request.getParameter("cognome");
         corso = request.getParameter("materia");
 
-        if(nome == null || cognome == null || corso == null){
-            out.print("wrong parameter");
+        if(nome == null || cognome == null || corso == null || op == null){
+            out.print("400");
             return;
         }
-        dao.assocDocenteCorso(nome, cognome, corso);
+
+        if(op.equals("rimuovi")){
+            if(dao.removeAssocDocenteCorso(nome, cognome, corso)){
+                out.println("200");
+                return;
+            }
+        }else if(op.equals("aggiungi")){
+            if(dao.addAssocDocenteCorso(nome, cognome, corso)){
+                out.println("200");
+                return;
+            }
+        }
+        out.println("400");
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -45,7 +67,7 @@ public class ServletAssocDocenteCorso extends HttpServlet {
         materia = request.getParameter("materia");
 
         if(materia == null){
-            out.print("wrong parameters");
+            out.print("400");
             return;
         }
 

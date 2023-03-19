@@ -34,6 +34,6 @@ public class ServletCancellaDocente extends HttpServlet {
         }
 
         dao.rimuoviDocente(Integer.parseInt(docente));
-        out.print("202");
+        out.print("200");
     }
 }

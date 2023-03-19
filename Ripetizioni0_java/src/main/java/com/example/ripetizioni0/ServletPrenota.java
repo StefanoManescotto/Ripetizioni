@@ -31,19 +31,23 @@ public class ServletPrenota extends HttpServlet {
         String cognomeDocente = request.getParameter("cognome");
         String data = request.getParameter("data");
         String[] ore = request.getParameter("ora").split("-");
+        int[] oreInt = new int[ore.length];
 
-        if(corso == null || nomeDocente == null || cognomeDocente == null || data == null || ore == null){
+        if(corso == null || nomeDocente == null || cognomeDocente == null || data == null || ore == null || ore.length == 0){
             out.print("400");
             return;
         }
 
         String serverResponse = "200";
-        for(String o : ore){
-            boolean ris = dao.aggiungiPrenotazione(Integer.parseInt(s.getAttribute("userId").toString()), corso, nomeDocente, cognomeDocente, data, Integer.parseInt(o));
-            if(!ris){
-                serverResponse = "400";
-            }
+        for(int i = 0; i < ore.length; i++){
+            oreInt[i] = Integer.parseInt(ore[i]);
         }
+
+        boolean ris = dao.aggiungiPrenotazioni(Integer.parseInt(s.getAttribute("userId").toString()), corso, nomeDocente, cognomeDocente, data, oreInt);
+        if(!ris){
+            serverResponse = "400";
+        }
+
         out.print(serverResponse);
     }
 }

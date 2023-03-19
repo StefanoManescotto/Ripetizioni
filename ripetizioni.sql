@@ -1,30 +1,30 @@
-drop table if exists Utenti, Corsi, Docenti, Corso_docente;
-
 create table if not exists Utenti(
 	idUtente int primary key AUTO_INCREMENT,
 	nome VARCHAR(30) not null,
 	cognome VARCHAR(30) not null,
 	email VARCHAR(50) not null,
-	password VARCHAR(50) not null,
+	password VARCHAR(64) not null,
 	ruolo VARCHAR(15) default "cliente"
 );
 
 create table if not exists Corsi(
 	titolo VARCHAR(30) primary key,
-	descrizione VARCHAR(30)
+	descrizione VARCHAR(30),
+	attiva TINYINT(1) default 1
 );
 
 create table if not exists Docenti(
 	idDocente int primary key AUTO_INCREMENT,
 	nome VARCHAR(30),
-	cognome VARCHAR(30)
+	cognome VARCHAR(30),
+	attiva TINYINT(1) default 1
 );
 
 create table if not exists Corso_docente(
 	idCorso VARCHAR(30),
 	idDocente int,
 	primary key(idCorso, idDocente),
-	foreign key (idCorso) references Corsi (idCorso),
+	foreign key (idCorso) references Corsi (titolo),
 	foreign key (idDocente) references Docenti (idDocente)
 );
 
@@ -34,12 +34,11 @@ create table if not exists Prenotazioni(
 	idCorso VARCHAR(30),
 	idDocente int,
 	dataPren DATE,
-	oraPren tinyint,
+	oraPren SMALLINT(6),
+	stato VARCHAR(20) default "attiva",
 	foreign key (idUtente) references Utenti(idUtente),
 	foreign key (idCorso) references Corsi(titolo),
 	foreign key (idDocente) references Docenti(idDocente)
-	
-	--foreign key (idCorso, idDocente) references Corso_docente(idCorso, idDocente)
 );
 
 
@@ -64,5 +63,3 @@ insert into Corso_docente (idCorso, idDocente) values ("italiano", 2);
 insert into Corso_docente (idCorso, idDocente) values ("matematica", 3);
 
 insert into Prenotazioni (idUtente, idCorso, idDocente, dataPren, oraPren) values (2, "matematica", 1, "2022-2-11", 17);
-	
-drop table Utenti;

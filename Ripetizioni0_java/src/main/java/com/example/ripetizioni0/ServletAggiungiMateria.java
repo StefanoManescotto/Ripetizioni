@@ -30,12 +30,12 @@ public class ServletAggiungiMateria extends HttpServlet {
         descrizione = request.getParameter("descrizione");
 
         if(materia == null || descrizione == null){
-            out.print("wrong parameters");
+            out.print("400");
             return;
         }
 
         if(dao.addMateria(materia, descrizione)){
-            out.print("202");
+            out.print("200");
             return;
         }
         out.print("La materia esiste gia");

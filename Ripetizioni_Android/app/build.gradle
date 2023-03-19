@@ -5,7 +5,7 @@ plugins {
 android {
     namespace 'com.example.ripetizioni_android'
     compileSdk 32
-
+//    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.example.ripetizioni_android"
         minSdk 23
@@ -37,4 +37,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+//    implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
+//    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    implementation "com.squareup.okhttp3:okhttp:3.2.0"
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+//    implementation "com.squareup.okhttp3:okhttp-urlconnection:3.0.0"
+
 }

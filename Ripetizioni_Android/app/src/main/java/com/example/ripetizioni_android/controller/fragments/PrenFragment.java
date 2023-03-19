@@ -8,24 +8,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ripetizioni_android.R;
+import com.example.ripetizioni_android.controller.MainActivity;
 import com.example.ripetizioni_android.controller.adapter.RecyclerViewAdapter;
 import com.example.ripetizioni_android.controller.adapter.RecyclerViewSingleRow;
+import com.example.ripetizioni_android.model.CambiaStatoModel;
+import com.example.ripetizioni_android.model.PrenotazioniModel;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PrenFragment extends Fragment {
-
-    private RecyclerView prenList;
-    private ArrayList<RecyclerViewSingleRow> recyclerViewList;
-    private TextView dialogTitle, dialogDay, dialogTime, dialogTeacher;
-    private Button btnOk, btnDelete, btnDone;
+    private RecyclerViewAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,15 +43,14 @@ public class PrenFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        recyclerViewList = new ArrayList<>();
-        recyclerViewList.add(new RecyclerViewSingleRow("Matematica", "Lunedi | 15-16 | Mario Rossi"));
-        recyclerViewList.add(new RecyclerViewSingleRow("Italiano", "Lunedi | 15-16 | Mario Rossi"));
-        recyclerViewList.add(new RecyclerViewSingleRow("Informatica", "Lunedi | 15-16 | Mario Rossi"));
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        ArrayList<RecyclerViewSingleRow> recyclerViewList = new ArrayList<>();
+        RecyclerView prenList;
 
+        (new PrenotazioniModel(this)).execute();
 
         prenList = getView().findViewById(R.id.listViewPren);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(recyclerViewList, getActivity());
+        adapter = new RecyclerViewAdapter(recyclerViewList, getActivity());
 
         prenList.setAdapter(adapter);
         prenList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -55,38 +59,42 @@ public class PrenFragment extends Fragment {
     }
 
     private void openDialog(RecyclerViewSingleRow itemPressed){
-        String[] prenDetails = itemPressed.getBody().split("\\|");
-
-        createDialogCompletePren(itemPressed.getTitle(), prenDetails[0], prenDetails[1], prenDetails[2]);
+        String[] currentState = itemPressed.getBody().split("\n");
+        if(currentState[1].equals("attiva")){
+            String[] prenDetails = itemPressed.getBody().split("\\|");
+            createDialogCompletePren(itemPressed.getTitle(), prenDetails[0], prenDetails[1], prenDetails[2].split("\n")[0], itemPressed.getIdPren());
+        }else{
+            Toast.makeText(getContext(), "Non puoi cambiare lo stato di una prenotazione non attiva", Toast.LENGTH_SHORT).show();
+        }
     }
     
-    private void createDialogCompletePren(String title, String day, String time, String teacher){
+    private void createDialogCompletePren(String title, String day, String time, String teacher, int idPren){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         final View createPrenView = getLayoutInflater().inflate(R.layout.dialog_cancel_prenotation, null);
 
-        dialogTitle = createPrenView.findViewById(R.id.dialog_title);
+        TextView dialogTitle = createPrenView.findViewById(R.id.dialog_title);
         dialogTitle.setText(title);
 
-        dialogDay = createPrenView.findViewById(R.id.dialog_day);
+        TextView dialogDay = createPrenView.findViewById(R.id.dialog_day);
         dialogDay.setText(day);
 
-        dialogTime = createPrenView.findViewById(R.id.dialog_time);
+        TextView dialogTime = createPrenView.findViewById(R.id.dialog_time);
         dialogTime.setText(time);
 
-        dialogTeacher = createPrenView.findViewById(R.id.dialog_teacher);
+        TextView dialogTeacher = createPrenView.findViewById(R.id.dialog_teacher);
         dialogTeacher.setText(teacher);
 
         dialogBuilder.setView(createPrenView);
         AlertDialog dialog = dialogBuilder.create();
 
-        btnOk = createPrenView.findViewById(R.id.btn_ok);
+        Button btnOk = createPrenView.findViewById(R.id.btn_ok);
         btnOk.setOnClickListener((v) -> onOkClick(dialog));
 
-        btnDelete = createPrenView.findViewById(R.id.btn_delete);
-        btnDelete.setOnClickListener((v) -> onDeleteClick());
+        Button btnDelete = createPrenView.findViewById(R.id.btn_delete);
+        btnDelete.setOnClickListener((v) -> onDeleteClick(idPren, dialog));
 
-        btnDone = createPrenView.findViewById(R.id.btn_done);
-        btnDone.setOnClickListener((v) -> onDoneClick());
+        Button btnDone = createPrenView.findViewById(R.id.btn_done);
+        btnDone.setOnClickListener((v) -> onDoneClick(idPren, dialog));
 
         dialog.show();
     }
@@ -95,25 +103,39 @@ public class PrenFragment extends Fragment {
         dialog.dismiss();
     }
 
-    private void onDoneClick(){
-        // TODO: model connection and mark as 'done'
+    private void onDoneClick(int idPren, DialogInterface dialog){
+        (new CambiaStatoModel(this)).execute(String.valueOf(idPren), "effettuata");
+        dialog.dismiss();
     }
 
-    private void onDeleteClick(){
+    private void onDeleteClick(int idPren, DialogInterface dialog){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Sei sicuro di voler cancellare la prenotazione?").setPositiveButton("Si", confirmationDialogListener)
-                .setNegativeButton("No", confirmationDialogListener).show();
+        builder.setMessage("Sei sicuro di voler cancellare la prenotazione?")
+                .setPositiveButton("Si", (d, w) -> {
+                    (new CambiaStatoModel(this)).execute(String.valueOf(idPren), "cancellata");
+                    dialog.dismiss();
+                })
+                .setNegativeButton("No",  (d, w) -> dialog.dismiss())
+                .show();
     }
 
-    DialogInterface.OnClickListener confirmationDialogListener = (dialog, which) -> {
-        switch (which){
-            case DialogInterface.BUTTON_POSITIVE:
-                // TODO: model connection, delete pren
-                break;
+    public void updateAdapter(JSONArray json) throws JSONException {
+        JSONObject materia;
+        String body;
+        for(int i = 0; i < json.length(); i++){
+            materia = json.getJSONObject(i);
 
-            case DialogInterface.BUTTON_NEGATIVE:
-                dialog.dismiss();
-                break;
+            body = materia.getString("data");
+            body += " | " + materia.getString("ora") + "-" + (Integer.parseInt(materia.getString("ora")) + 1);
+            body += " | " + materia.getString("nomeDocente") + " " + materia.getString("cognomeDocente");
+            body += "\n" + materia.getString("stato");
+            body = body.replace("\"", "");
+
+            adapter.add(new RecyclerViewSingleRow(materia.getInt("idPrenotazione"), materia.getString("corso"), body));
         }
-    };
+    }
+
+    public void reload(){
+        ((MainActivity) getActivity()).loadPrenFragment();
+    }
 }

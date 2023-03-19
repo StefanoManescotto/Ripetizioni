@@ -13,7 +13,7 @@ public class ServletLogOut extends HttpServlet {
 
         logOut(request, response);
 
-        out.print("logged out");
+        out.print("200");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -22,7 +22,7 @@ public class ServletLogOut extends HttpServlet {
 
         logOut(request, response);
 
-        out.print("logged out");
+        out.print("200");
     }
 
     private void logOut(HttpServletRequest request, HttpServletResponse response){

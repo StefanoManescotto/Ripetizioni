@@ -24,12 +24,6 @@ function loadDocentiViewData(){
             btnCancella.setAttribute("class", "btn prenotazioni-btn-cancella");
             btnCancella.setAttribute("onclick", "rimuoviDocente('" + obj.idDocente + "')");
             btnCancella.innerHTML = "cancella";
-            // let btnAggiungi = document.createElement("button");
-            // btnAggiungi.setAttribute("class", "btn prenotazioni-btn-effettuata");
-            // btnAggiungi.setAttribute("onclick", "aggiungiDocenteMateriaView('" + obj.titolo + "')");
-            // btnAggiungi.innerHTML = "+ docente";
-            // thirdCol.setAttribute("class", "col-margin col col-2");
-            // thirdCol.appendChild(btnAggiungi);
             thirdCol.appendChild(btnCancella);
 
             li.appendChild(firstCol);
@@ -46,7 +40,7 @@ function aggiungiDocenteClick(){
     let inputCognome = document.getElementById("docenteCognome");
 
     $.get("aggiungiDocente", {nome: inputNome.value, cognome: inputCognome.value}, function (data){
-        if(data !== "202"){
+        if(data !== "200"){
             alert("Il docente inserito esiste giá");
         }
     });

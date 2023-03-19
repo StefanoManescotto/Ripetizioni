@@ -200,7 +200,6 @@ function addDocentiList(dList){
 function addOreList(oreList){
     let ul = document.getElementById("checkOra");
     oreList.forEach(function (o){
-        // console.log("addOre: " + o);
         let chb = document.getElementsByClassName(o);
         if(chb[0] === undefined){
             let li = document.createElement("li");
@@ -311,16 +310,18 @@ function prenota(){
     }
     ore = ore.slice(0, -1);
 
-    return $.get("prenota", {corso: nomeCorso.toString(), nome: docente[0], cognome: docente[1], data: dataPren, ora: ore}, function (data){
+    $.get("prenota", {corso: nomeCorso.toString(), nome: docente[0], cognome: docente[1], data: dataPren, ora: ore}, function (data){
         if(data !== "200"){
-            let lblState = document.getElementById("lbl-state-prenota");
-            lblState.innerHTML = "Non e stato possibile completare la prenotazione (" + data + ")";
+            alert("Orario non disponibile, operazione non completata")
+        }else{
+            alert("operazione completata");
+            location.reload();
         }
     });
 }
 
 function validateFormConferma() {
-    let docente = document.getElementById("selectInsegnante").value.split(" ");
+    let docente = document.getElementById("selectInsegnante").value;
     let dataPren = document.getElementById("selectGiorno").value;
     let checkBoxes = document.getElementsByClassName("timeCheckBox");
     let nomeCorso = document.getElementById("confermaViewMateria").innerText;
@@ -332,17 +333,12 @@ function validateFormConferma() {
         }
     }
 
-    if (docente === "" || dataPren === "" || ore === "" || nomeCorso === "") {
+    if (docente === "empty" || dataPren === "empty" || ore === "" || nomeCorso === "") {
         let lblState = document.getElementById("lbl-state-prenota");
         lblState.innerHTML = "Devi riempire tutti i campi";
         return false;
     }
 
     prenota();
-    return true;
-    // let response = prenota();
-    // console.log(response);
-    // console.log("HA FUNZIONATO " + response);
-    //
-    // return false;
+    return false;
 }

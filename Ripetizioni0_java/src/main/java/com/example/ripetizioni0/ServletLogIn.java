@@ -18,7 +18,7 @@ public class ServletLogIn extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Persona utente = null;
+        Persona utente;
 
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
@@ -31,9 +31,10 @@ public class ServletLogIn extends HttpServlet {
         }
 
         utente = dao.getUtente(userEmail);
+        System.out.println(userEmail + " - " + utente);
 
         if(utente == null || !utente.getPassword().equals(DigestUtils.sha256Hex(password).toUpperCase())){
-            out.print("User Not Found");//TODO: change this to 400
+            out.print("400");
             return;
         }
 
@@ -41,13 +42,16 @@ public class ServletLogIn extends HttpServlet {
         String jsessionID = s.getId();
 
         Cookie cookie = new Cookie("sessionId", jsessionID);
+        System.out.println("HERE CREATING? " + jsessionID);
         cookie.setMaxAge(60 * 30);
         response.addCookie(cookie);
 
         s.setAttribute("userId", utente.getId());
+        s.setAttribute("userName", utente.getNome());
+        s.setAttribute("userSurname", utente.getCognome());
         s.setAttribute("userEmail", utente.getEmail());
         s.setAttribute("type", utente.getRuolo());
 
-        out.print("authenticated");
+        out.print("200");
     }
 }

@@ -1,7 +1,6 @@
 package com.example.ripetizioni0;
 
 import com.example.ripetizioni0.DAO.DAO;
-import com.example.ripetizioni0.DAO.Persona;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -32,14 +31,14 @@ public class ServletAggiungiDocenti extends HttpServlet {
         cognome = request.getParameter("cognome");
 
         if(nome == null || cognome == null){
-            out.print("wrong parameters");
+            out.print("400");
             return;
         }
 
         if(dao.aggiungiDocente(nome, cognome)){
-            out.print("202");
+            out.print("200");
             return;
         }
-        out.print("La materia esiste gia");
+        out.print("400");
     }
 }
